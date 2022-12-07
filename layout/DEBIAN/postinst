@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -d /var/mobile/Documents/dev.traurige/ ]; then
+    chown -R mobile:mobile /var/mobile/Documents/dev.traurige/
+fi
+
+launchctl load /Library/LaunchDaemons/dev.traurige.kayokod.plist;

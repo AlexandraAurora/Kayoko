@@ -1,0 +1,3 @@
+#!/bin/sh
+
+launchctl unload /Library/LaunchDaemons/dev.traurige.kayokod.plist;

@@ -1,0 +1,9 @@
+Package: dev.traurige.kayoko
+Name: Kayoko
+Depends: firmware (>= 13.0), mobilesubstrate, preferenceloader, ws.hbang.common (>= 1.14)
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Feature rich clipboard manager for iOS
+Maintainer: Traurige <hello@traurige.dev>
+Author: Traurige <hello@traurige.dev>
+Section: Tweaks
