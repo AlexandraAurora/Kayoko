@@ -11,4 +11,5 @@ assignees: Traurige
 
 **System information:**
 - iOS version:
+- Device:
 - Jailbreak:
