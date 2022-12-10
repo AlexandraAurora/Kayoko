@@ -8,10 +8,11 @@
 #import "KayokoTableView.h"
 
 @implementation KayokoTableView
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
+- (instancetype)initWithName:(NSString *)name {
+    self = [super init];
 
     if (self) {
+        [self setName:name];
         [self setDelegate:self];
         [self setDataSource:self];
         [self setBackgroundColor:[UIColor clearColor]];
@@ -31,6 +32,9 @@
 
     KayokoTableViewCell* cell = [[KayokoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault andItem:item reuseIdentifier:@"KayokoTableViewCell"];
 
+    UILongPressGestureRecognizer* gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGestureRecognizer:)];
+    [cell addGestureRecognizer:gesture];
+
     return cell;
 }
 
@@ -42,6 +46,18 @@
     [[PasteboardManager sharedInstance] updatePasteboardWithItem:item fromHistoryWithKey:kHistoryKeyHistory shouldAutoPaste:YES];
 
     [[self superview] performSelector:@selector(hide)];
+}
+
+- (void)handleLongPressGestureRecognizer:(UILongPressGestureRecognizer *)recognizer {
+    if ([recognizer state] == UIGestureRecognizerStateBegan) {
+        KayokoTableViewCell* cell = (KayokoTableViewCell *)[recognizer view];
+        NSIndexPath* indexPath = [self indexPathForCell:cell];
+
+        NSDictionary* dictionary = [self items][[indexPath row]];
+        PasteboardItem* item = [PasteboardItem itemFromDictionary:dictionary];
+
+        [[self superview] performSelector:@selector(showPreviewWithItem:) withObject:item];
+    }
 }
 
 - (void)reloadDataWithItems:(NSArray *)items {

@@ -19,6 +19,7 @@
         [[self layer] setShadowRadius:10];
         [[self layer] setShadowOpacity:0.5];
 
+
         // background blur
         [self setBlurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
         [self setBlurEffectView:[[UIVisualEffectView alloc] initWithEffect:[self blurEffect]]];
@@ -44,6 +45,11 @@
             [[[self headerView] leadingAnchor] constraintEqualToAnchor:[self leadingAnchor]],
             [[[self headerView] trailingAnchor] constraintEqualToAnchor:[self trailingAnchor]]
         ]];
+
+
+        // tap gesture recognizer
+        [self setTapGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hidePreview)]];
+        [[self headerView] addGestureRecognizer:[self tapGestureRecognizer]];
 
 
         // grabber
@@ -84,30 +90,27 @@
         ]];
 
 
-        // favorites button
-        [self setFavoritesButton:[[UIButton alloc] init]];
-        [[self favoritesButton] addTarget:self action:@selector(showFavorites) forControlEvents:UIControlEventTouchUpInside];
+        // header button
+        [self setHeaderButton:[[UIButton alloc] init]];
+        [[self headerButton] addTarget:self action:@selector(handleHeaderButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [self updateHeaderButtonImageWithName:@"heart" andColor:[UIColor labelColor]];
+        [[self headerButton] setTintColor:[UIColor labelColor]];
+        [[self headerView] addSubview:[self headerButton]];
 
-        UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
-        [[self favoritesButton] setImage:[[UIImage systemImageNamed:@"heart"] imageWithConfiguration:configuration] forState:UIControlStateNormal];
-
-        [[self favoritesButton] setTintColor:[UIColor labelColor]];
-        [[self headerView] addSubview:[self favoritesButton]];
-
-        [[self favoritesButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[self headerButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
         [NSLayoutConstraint activateConstraints:@[
-            [[[self favoritesButton] centerYAnchor] constraintEqualToAnchor:[[self titleLabel] centerYAnchor]],
-            [[[self favoritesButton] trailingAnchor] constraintEqualToAnchor:[[self headerView] trailingAnchor] constant:-24],
+            [[[self headerButton] centerYAnchor] constraintEqualToAnchor:[[self titleLabel] centerYAnchor]],
+            [[[self headerButton] trailingAnchor] constraintEqualToAnchor:[[self headerView] trailingAnchor] constant:-24],
         ]];
 
 
-        // pan gesture
-        [self setPanGesture:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGestureRecognizer:)]];
-        [[self headerView] addGestureRecognizer:[self panGesture]];
+        // pan gesture recognizer
+        [self setPanGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGestureRecognizer:)]];
+        [[self headerView] addGestureRecognizer:[self panGestureRecognizer]];
 
 
         // history table view
-        [self setHistoryTableView:[[KayokoHistoryTableView alloc] init]];
+        [self setHistoryTableView:[[KayokoHistoryTableView alloc] initWithName:@"History"]];
         [self addSubview:[self historyTableView]];
 
         [[self historyTableView] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -120,10 +123,10 @@
 
 
         // favorites table view
-        [self setFavoritesTableView:[[KayokoFavoritesTableView alloc] init]];
+        [self setFavoritesTableView:[[KayokoFavoritesTableView alloc] initWithName:@"Favorites"]];
+        [[self favoritesTableView] setHidden:YES];
         [self addSubview:[self favoritesTableView]];
 
-        [[self favoritesTableView] setHidden:YES];
         [[self favoritesTableView] reloadDataWithItems:nil];
 
         [[self favoritesTableView] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -133,70 +136,28 @@
             [[[self favoritesTableView] trailingAnchor] constraintEqualToAnchor:[self trailingAnchor]],
             [[[self favoritesTableView] bottomAnchor] constraintEqualToAnchor:[self bottomAnchor]]
         ]];
+
+
+        // preview view
+        [self setPreviewView:[[KayokoPreviewView alloc] init]];
+        [[self previewView] setHidden:YES];
+        [self addSubview:[self previewView]];
+
+        [[self previewView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [NSLayoutConstraint activateConstraints:@[
+            [[[self previewView] topAnchor] constraintEqualToAnchor:[[self headerView] bottomAnchor] constant:8],
+            [[[self previewView] leadingAnchor] constraintEqualToAnchor:[self leadingAnchor]],
+            [[[self previewView] trailingAnchor] constraintEqualToAnchor:[self trailingAnchor]],
+            [[[self previewView] bottomAnchor] constraintEqualToAnchor:[self bottomAnchor]]
+        ]];
     }
 
     return self;
 }
 
-- (void)showFavorites {
-    if (![[self historyTableView] isHidden]) {
-        UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
-        [[self favoritesButton] setImage:[[UIImage systemImageNamed:@"heart.fill"] imageWithConfiguration:configuration] forState:UIControlStateNormal];
-
-        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
-        [[self favoritesTableView] reloadDataWithItems:items];
-        [[self favoritesTableView] setHidden:NO];
-
-        [self updateSubtitleWithHistoryLabel:@"Favorites" andItemCount:[items count]];
-
-        [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            [[self historyTableView] setTransform:CGAffineTransformMakeScale(0.95, 0.95)];
-            [[self historyTableView] setAlpha:0];
-
-            [[self favoritesTableView] setTransform:CGAffineTransformIdentity];
-            [[self favoritesTableView] setAlpha:1];
-
-            [[self favoritesButton] setTintColor:[UIColor systemPinkColor]];
-        } completion:^(BOOL finished) {
-            [[self historyTableView] reloadDataWithItems:nil];
-            [[self historyTableView] setHidden:YES];
-        }];
-    } else {
-        UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
-        [[self favoritesButton] setImage:[[UIImage systemImageNamed:@"heart"] imageWithConfiguration:configuration] forState:UIControlStateNormal];
-
-        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
-        [[self historyTableView] reloadDataWithItems:items];
-        [[self historyTableView] setHidden:NO];
-
-        [self updateSubtitleWithHistoryLabel:@"History" andItemCount:[items count]];
-
-        [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            [[self historyTableView] setTransform:CGAffineTransformIdentity];
-            [[self historyTableView] setAlpha:1];
-
-            [[self favoritesTableView] setTransform:CGAffineTransformMakeScale(1.05, 1.05)];
-            [[self favoritesTableView] setAlpha:0];
-
-            [[self favoritesButton] setTintColor:[UIColor labelColor]];
-        } completion:^(BOOL finished) {
-            [[self favoritesTableView] reloadDataWithItems:nil];
-            [[self favoritesTableView] setHidden:YES];
-        }];
-    }
-}
-
-- (void)updateSubtitleWithHistoryLabel:(NSString *)label andItemCount:(NSUInteger)count {
-    if (count == 1) {
-        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – 1 Item", label]];
-    } else {
-        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – %lu Items", label, count]];
-    }
-}
-
 - (void)handlePanGestureRecognizer:(UIPanGestureRecognizer *)recognizer {
     CGPoint translation = CGPointMake(0, 0);
-    const NSUInteger kMaxTranslation = 150;
+    NSUInteger const kMaxTranslation = 150;
 
     if ([recognizer state] == UIGestureRecognizerStateChanged) {
         translation = [recognizer translationInView:self];
@@ -205,7 +166,7 @@
             return;
         }
 
-        float alpha = fabs(translation.y / kMaxTranslation);
+        CGFloat alpha = fabs(translation.y / kMaxTranslation);
         [UIView animateWithDuration:0.1 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             [self setTransform:CGAffineTransformMakeTranslation(0, translation.y)];
             [self setAlpha:1 - alpha];
@@ -225,8 +186,112 @@
     }
 }
 
+- (void)handleHeaderButtonPressed {
+    if (_isAnimating) {
+        return;
+    }
+
+    if (![[self previewView] isHidden]) {
+        [self hidePreview];
+    }
+
+    if ([[self historyTableView] isHidden]) {
+        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
+        [[self favoritesTableView] reloadDataWithItems:items];
+
+        [self showContentView:[self historyTableView] andHideContentView:[self favoritesTableView] reverse:YES];
+
+        [self updateSubtitleWithHistoryLabel:[[self historyTableView] name] andItemCount:[items count]];
+        [self updateHeaderButtonImageWithName:@"heart" andColor:[UIColor labelColor]];
+    } else {
+        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
+        [[self favoritesTableView] reloadDataWithItems:items];
+
+        [self showContentView:[self favoritesTableView] andHideContentView:[self historyTableView] reverse:NO];
+
+        [self updateSubtitleWithHistoryLabel:[[self favoritesTableView] name] andItemCount:[items count]];
+        [self updateHeaderButtonImageWithName:@"heart.fill" andColor:[UIColor systemPinkColor]];
+    }
+}
+
+- (void)showPreviewWithItem:(PasteboardItem *)item {
+    if ([item hasLink] || [item hasMusicLink]) {
+        [[[self previewView] webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[item content]]]];
+        [[[self previewView] webView] setHidden:NO];
+    } else if ([item hasImage]) {
+        NSData* imageData = [[NSFileManager defaultManager] contentsAtPath:[NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]]];
+        [[[self previewView] imageView] setImage:[UIImage imageWithData:imageData]];
+        [[[self previewView] imageView] setHidden:NO];
+    } else {
+        [[[self previewView] textView] setText:[item content]];
+        [[[self previewView] textView] setHidden:NO];
+    }
+
+    _previewSourceTableView = [[self historyTableView] isHidden] ? [self favoritesTableView] : [self historyTableView];
+    [self showContentView:[self previewView] andHideContentView:_previewSourceTableView reverse:NO];
+
+    [[self subtitleLabel] setText:@"Preview"];
+}
+
+- (void)hidePreview {
+    if ([[self previewView] isHidden] || _isAnimating) {
+        return;
+    }
+
+    [self showContentView:_previewSourceTableView andHideContentView:[self previewView] reverse:YES];
+    [[self previewView] reset];
+
+    [self updateSubtitleWithHistoryLabel:[_previewSourceTableView name] andItemCount:[[_previewSourceTableView items] count]];
+}
+
+- (void)showContentView:(UIView *)viewToShow andHideContentView:(UIView *)viewToHide reverse:(BOOL)reverse {
+    CGFloat viewToShowTransform = reverse ? 0.95 : 1.05;
+    [viewToShow setTransform:CGAffineTransformMakeScale(viewToShowTransform, viewToShowTransform)];
+    [viewToShow setAlpha:0];
+    [viewToShow setHidden:NO];
+
+    _isAnimating = YES;
+    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [viewToShow setTransform:CGAffineTransformIdentity];
+        [viewToShow setAlpha:1];
+
+        CGFloat viewToHideTransform = reverse ? 1.05 : 0.95;
+        [viewToHide setTransform:CGAffineTransformMakeScale(viewToHideTransform, viewToHideTransform)];
+        [viewToHide setAlpha:0];
+    } completion:^(BOOL finished) {
+        [viewToHide setHidden:YES];
+        _isAnimating = NO;
+    }];
+}
+
+- (void)updateSubtitleWithHistoryLabel:(NSString *)label andItemCount:(NSUInteger)count {
+    if (count == 1) {
+        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – 1 Item", label]];
+    } else {
+        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – %lu Items", label, count]];
+    }
+}
+
+- (void)updateHeaderButtonImageWithName:(NSString *)imageName andColor:(UIColor *)color {
+    UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
+    [[self headerButton] setImage:[[UIImage systemImageNamed:imageName] imageWithConfiguration:configuration] forState:UIControlStateNormal];
+    [[self headerButton] setTintColor:color];
+}
+
+- (void)reload {
+    if (![[self historyTableView] isHidden]) {
+        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
+        [[self historyTableView] reloadDataWithItems:items];
+        [self updateSubtitleWithHistoryLabel:@"History" andItemCount:[items count]];
+    } else {
+        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
+        [[self favoritesTableView] reloadDataWithItems:items];
+        [self updateSubtitleWithHistoryLabel:@"Favorites" andItemCount:[items count]];
+    }
+}
+
 - (void)show {
-    if ([self isAnimating]) {
+    if (_isAnimating) {
         return;
     }
 
@@ -241,36 +306,29 @@
     [self setAlpha:0];
     [self setHidden:NO];
 
-    [self setIsAnimating:YES];
+    _isAnimating = YES;
     [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self setTransform:CGAffineTransformIdentity];
         [self setAlpha:1];
     } completion:^(BOOL finished) {
-        [self setIsAnimating:NO];
+        _isAnimating = NO;
     }];
 }
 
 - (void)hide {
+    if (_isAnimating) {
+        return;
+    }
+
+    _isAnimating = YES;
     [UIView animateWithDuration:0.2 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self setAlpha:0];
     } completion:^(BOOL finished) {
         [self setHidden:YES];
         [[self historyTableView] reloadDataWithItems:nil];
         [[self favoritesTableView] reloadDataWithItems:nil];
+        [[self previewView] reset];
+        _isAnimating = NO;
     }];
-}
-
-- (void)reload {
-    if (![[self historyTableView] isHidden]) {
-        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
-        [[self historyTableView] reloadDataWithItems:items];
-
-        [self updateSubtitleWithHistoryLabel:@"History" andItemCount:[items count]];
-    } else {
-        NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
-        [[self favoritesTableView] reloadDataWithItems:items];
-
-        [self updateSubtitleWithHistoryLabel:@"Favorites" andItemCount:[items count]];
-    }
 }
 @end
