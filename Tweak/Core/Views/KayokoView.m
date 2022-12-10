@@ -212,6 +212,8 @@
         [self updateSubtitleWithHistoryLabel:[[self favoritesTableView] name] andItemCount:[items count]];
         [self updateHeaderButtonImageWithName:@"heart.fill" andColor:[UIColor systemPinkColor]];
     }
+
+    [self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleSoft];
 }
 
 - (void)showPreviewWithItem:(PasteboardItem *)item {
@@ -231,6 +233,7 @@
     [self showContentView:[self previewView] andHideContentView:_previewSourceTableView reverse:NO];
 
     [[self subtitleLabel] setText:@"Preview"];
+    [self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleMedium];
 }
 
 - (void)hidePreview {
@@ -276,6 +279,13 @@
     UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
     [[self headerButton] setImage:[[UIImage systemImageNamed:imageName] imageWithConfiguration:configuration] forState:UIControlStateNormal];
     [[self headerButton] setTintColor:color];
+}
+
+- (void)triggerHapticFeedbackWithStyle:(UIImpactFeedbackStyle)style {
+    [self setFeedbackGenerator:[[UIImpactFeedbackGenerator alloc] initWithStyle:style]];
+    [[self feedbackGenerator] prepare];
+    [[self feedbackGenerator] impactOccurred];
+    [self setFeedbackGenerator:nil];
 }
 
 - (void)reload {

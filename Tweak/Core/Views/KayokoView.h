@@ -29,6 +29,7 @@
 @property(nonatomic, retain)KayokoHistoryTableView* historyTableView;
 @property(nonatomic, retain)KayokoFavoritesTableView* favoritesTableView;
 @property(nonatomic, retain)KayokoPreviewView* previewView;
+@property(nonatomic, retain)UIImpactFeedbackGenerator* feedbackGenerator;
 @property(atomic, assign)BOOL addTranslateOption;
 @property(atomic, assign)BOOL addSongDotLinkOption;
 - (void)showPreviewWithItem:(PasteboardItem *)item;
