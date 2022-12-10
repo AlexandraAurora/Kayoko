@@ -63,7 +63,7 @@
 }
 
 - (void)resetPreferences {
-	NSUserDefaults* userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"dev.traurige.kayoko.preferences"];
+	NSUserDefaults* userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kPreferencesIdentifier];
 	for (NSString* key in [userDefaults dictionaryRepresentation]) {
 		[userDefaults removeObjectForKey:key];
 	}

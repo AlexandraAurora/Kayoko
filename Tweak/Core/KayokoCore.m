@@ -51,7 +51,7 @@ static void reload() {
 #pragma mark - Preferences
 
 static void load_preferences() {
-    preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.traurige.kayoko.preferences"];
+    preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
     [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
     [preferences registerUnsignedInteger:&pfMaximumHistoryAmount default:kPreferenceKeyMaximumHistoryAmountDefaultValue forKey:kPreferenceKeyMaximumHistoryAmount];
     [preferences registerBool:&pfSaveText default:kPreferenceKeySaveTextDefaultValue forKey:kPreferenceKeySaveText];

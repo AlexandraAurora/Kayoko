@@ -5,6 +5,8 @@
 //  Created by Alexandra (@Traurige)
 //
 
+static NSString* const kPreferencesIdentifier = @"dev.traurige.kayoko.preferences";
+
 static NSString* const kPreferenceKeyEnabled = @"Enabled";
 static NSString* const kPreferenceKeyMaximumHistoryAmount = @"MaximumHistoryAmount";
 static NSString* const kPreferenceKeySaveText = @"SaveText";

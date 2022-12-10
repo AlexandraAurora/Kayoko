@@ -149,7 +149,7 @@ static void paste() {
 #pragma mark - Preferences
 
 static void load_preferences() {
-    preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.traurige.kayoko.preferences"];
+    preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
     [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
     [preferences registerUnsignedInteger:&pfActivationMethod default:kPreferenceKeyActivationMethodDefaultValue forKey:kPreferenceKeyActivationMethod];
     [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPasteDefaultValue forKey:kPreferenceKeyAutomaticallyPaste];
