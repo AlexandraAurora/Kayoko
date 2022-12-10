@@ -11,8 +11,8 @@
 
 // UIStatusBarWindow is sick because it's present everywhere and doesn't need uikit injection
 // it also prevents sandbox issues as the core runs on springboard (which has fs r/w)
-void (* orig_UIStatusBarWindow_initWithFrame)(UIStatusBarWindow* self, SEL _cmd, CGRect frame);
-void override_UIStatusBarWindow_initWithFrame(UIStatusBarWindow* self, SEL _cmd, CGRect frame) {
+static void (* orig_UIStatusBarWindow_initWithFrame)(UIStatusBarWindow* self, SEL _cmd, CGRect frame);
+static void override_UIStatusBarWindow_initWithFrame(UIStatusBarWindow* self, SEL _cmd, CGRect frame) {
     orig_UIStatusBarWindow_initWithFrame(self, _cmd, frame);
 
     if (!kayokoView) {
@@ -71,14 +71,14 @@ static void load_preferences() {
 
 #pragma mark - Constructor
 
-__attribute((constructor)) static void initialize() {
+__attribute((constructor)) static void init() {
     load_preferences();
 
     if (!pfEnabled) {
         return;
     }
 
-    MSHookMessageEx(NSClassFromString(@"UIStatusBarWindow"), @selector(initWithFrame:), (IMP)&override_UIStatusBarWindow_initWithFrame, (IMP *)&orig_UIStatusBarWindow_initWithFrame);
+    MSHookMessageEx(objc_getClass("UIStatusBarWindow"), @selector(initWithFrame:), (IMP)&override_UIStatusBarWindow_initWithFrame, (IMP *)&orig_UIStatusBarWindow_initWithFrame);
 
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)kayokod_pasteboard_changed_notification, (CFStringRef)@"dev.traurige.kayoko.daemon.pasteboard.changed", NULL, (CFNotificationSuspensionBehavior)kNilOptions);
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)show, (CFStringRef)@"dev.traurige.kayoko.core.show", NULL, (CFNotificationSuspensionBehavior)kNilOptions);

@@ -205,7 +205,7 @@
             return;
         }
 
-        double alpha = fabs(translation.y / kMaxTranslation);
+        float alpha = fabs(translation.y / kMaxTranslation);
         [UIView animateWithDuration:0.1 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             [self setTransform:CGAffineTransformMakeTranslation(0, translation.y)];
             [self setAlpha:1 - alpha];
