@@ -6,7 +6,7 @@
 
 	if (self) {
 		notify_register_dispatch("com.apple.pasteboard.notify.changed", &(_token), dispatch_get_main_queue(), ^(int _) {
-			CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"dev.traurige.kayoko.daemon.pasteboard.changed", nil, nil, YES);
+			CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyObserverPasteboardChanged, nil, nil, YES);
 		});
 	}
 

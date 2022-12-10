@@ -7,6 +7,7 @@
 
 #import "substrate.h"
 #import <UIKit/UIKit.h>
+#import "../../Preferences/NotificationKeys.h"
 #import "../../Preferences/PreferenceKeys.h"
 #import <Cephei/HBPreferences.h>
 

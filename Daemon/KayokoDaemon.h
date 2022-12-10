@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "../Preferences/NotificationKeys.h"
 #import <notify.h>
 
 @interface KayokoDaemon : NSObject {

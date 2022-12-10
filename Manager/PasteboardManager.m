@@ -187,7 +187,7 @@
 
     // automatic paste should not occur for asynchronous operations
     if ([self automaticallyPaste] && shouldAutoPaste) {
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"dev.traurige.kayoko.helper.paste", nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyHelperPaste, nil, nil, YES);
     }
 }
 
@@ -209,7 +209,7 @@
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
     [jsonData writeToFile:kHistoryPath atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"dev.traurige.kayoko.core.reload", nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreReload, nil, nil, YES);
 }
 
 - (void)ensureResourcesExist {

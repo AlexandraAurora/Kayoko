@@ -69,7 +69,7 @@
 	}
 
 	[self reloadSpecifiers];
-	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"dev.traurige.kayoko.preferences.reload", nil, nil, YES);
+	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyPreferencesReload, nil, nil, YES);
 }
 
 - (void)clearHistoryPrompt {

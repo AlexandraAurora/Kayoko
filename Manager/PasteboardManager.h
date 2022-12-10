@@ -9,6 +9,7 @@
 #import "PasteboardItem.h"
 #import "../Utils/CommonUtil.h"
 #import "../Utils/ImageUtil.h"
+#import "../Preferences/NotificationKeys.h"
 #import "../Preferences/PreferenceKeys.h"
 
 static NSString* const kHistoryPath = @"/var/mobile/Documents/dev.traurige/Kayoko/history.json";
