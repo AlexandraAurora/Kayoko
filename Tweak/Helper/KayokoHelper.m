@@ -86,7 +86,7 @@ static void override_UIPredictionViewController_predictionView_didSelectCandidat
     }
 }
 
-BOOL override_UIPredictionViewController_isVisibleForInputDelegate_inputViews(UIPredictionViewController* self, SEL _cmd, id delegate, id inputViews) {
+static BOOL override_UIPredictionViewController_isVisibleForInputDelegate_inputViews(UIPredictionViewController* self, SEL _cmd, id delegate, id inputViews) {
     return YES;
 }
 
@@ -104,7 +104,7 @@ static void override_UIKeyboardLayoutStar_setKeyplaneName(UIKeyboardLayoutStar* 
     }
 }
 
-BOOL override_UIKeyboardImpl_shouldShowDictationKey(UIKeyboardImpl* self, SEL _cmd) {
+static BOOL override_UIKeyboardImpl_shouldShowDictationKey(UIKeyboardImpl* self, SEL _cmd) {
     return YES;
 }
 
@@ -114,8 +114,8 @@ static void override_UISystemKeyboardDockController_dictationItemButtonWasPresse
 }
 
 // home button devices
-UIKBTree* (* orig_UIKeyboardLayoutStar_keyHitTest)(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point);
-UIKBTree* override_UIKeyboardLayoutStar_keyHitTest(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point) {
+static UIKBTree* (* orig_UIKeyboardLayoutStar_keyHitTest)(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point);
+static UIKBTree* override_UIKeyboardLayoutStar_keyHitTest(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point) {
     UIKBTree* orig = orig_UIKeyboardLayoutStar_keyHitTest(self, _cmd, point);
 
     if ([[orig name] isEqualToString:@"Dictation-Key"]) {
