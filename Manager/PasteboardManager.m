@@ -81,11 +81,11 @@
         return;
     }
 
-    NSMutableDictionary* json = [self getJson];
-    NSMutableArray* history = json[historyKey] ?: [[NSMutableArray alloc] init];
-
     // remove duplicates
     [self removePasteboardItem:item fromHistoryWithKey:historyKey shouldRemoveImage:NO];
+
+    NSMutableDictionary* json = [self getJson];
+    NSMutableArray* history = json[historyKey] ?: [[NSMutableArray alloc] init];
 
     [history insertObject:@{
         @"bundleIdentifier": [item bundleIdentifier] ?: @"com.apple.springboard",
