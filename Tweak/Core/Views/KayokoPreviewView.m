@@ -25,7 +25,7 @@
 
         // image view
         [self setImageView:[[UIImageView alloc] init]];
-        [[self imageView] setContentMode:UIViewContentModeScaleAspectFill];
+        [[self imageView] setContentMode:UIViewContentModeScaleAspectFit];
         [[self imageView] setHidden:YES];
         [self addSubview:[self imageView]];
 
