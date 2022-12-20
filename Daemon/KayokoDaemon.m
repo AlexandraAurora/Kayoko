@@ -1,3 +1,10 @@
+//
+//  KayokoDaemon.m
+//  Kayoko
+//
+//  Created by Alexandra (@Traurige)
+//
+
 #import "KayokoDaemon.h"
 
 @implementation KayokoDaemon
