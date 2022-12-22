@@ -335,9 +335,6 @@
         [self setAlpha:0];
     } completion:^(BOOL finished) {
         [self setHidden:YES];
-        [[self historyTableView] reloadDataWithItems:nil];
-        [[self favoritesTableView] reloadDataWithItems:nil];
-        [[self previewView] reset];
         _isAnimating = NO;
     }];
 }
