@@ -11,6 +11,9 @@ assignees: Traurige
 
 **Steps to reproduce the behavior:**
 
+**Crash log:**
+Upload your log file to pastebin and paste the link here.
+
 **System information:**
 - iOS version:
 - Device:
