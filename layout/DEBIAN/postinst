@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [ -d /var/mobile/Documents/dev.traurige/ ]; then
-    chown -R mobile:mobile /var/mobile/Documents/dev.traurige/
+    chown -R mobile:mobile /var/mobile/Documents/dev.traurige > /dev/null 2>&1
 fi
 
-launchctl load /Library/LaunchDaemons/dev.traurige.kayokod.plist;
+launchctl load -w /Library/LaunchDaemons/dev.traurige.kayokod.plist > /dev/null 2>&1
+exit 0

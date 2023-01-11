@@ -1,4 +1,5 @@
 .DS_Store
 .theos
-packages/
+packages
 .vscode
+.stamp

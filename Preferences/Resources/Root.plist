@@ -186,7 +186,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Appearance</string>
+			<string>Appearance &amp; Sound Effects</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -211,6 +211,34 @@
 			<true />
 			<key>isSegmented</key>
 			<false />
+			<key>PostNotification</key>
+			<string>dev.traurige.kayoko.preferences.reload</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>dev.traurige.kayoko.preferences</string>
+			<key>key</key>
+			<string>PlaySoundEffects</string>
+			<key>label</key>
+			<string>Play Sound Effects</string>
+			<key>PostNotification</key>
+			<string>dev.traurige.kayoko.preferences.reload</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>dev.traurige.kayoko.preferences</string>
+			<key>key</key>
+			<string>PlayHapticFeedback</string>
+			<key>label</key>
+			<string>Play Haptic Feedback</string>
 			<key>PostNotification</key>
 			<string>dev.traurige.kayoko.preferences.reload</string>
 		</dict>

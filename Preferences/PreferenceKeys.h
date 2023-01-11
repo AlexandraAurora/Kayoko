@@ -16,6 +16,8 @@ static NSString* const kPreferenceKeyAutomaticallyPaste = @"AutomaticallyPaste";
 static NSString* const kPreferenceKeyAddSongDotLinkOption = @"AddSongDotLinkOption";
 static NSString* const kPreferenceKeyAddTranslateOption = @"AddTranslateOption";
 static NSString* const kPreferenceKeyHeightInPoints = @"HeightInPoints";
+static NSString* const kPreferenceKeyPlaySoundEffects = @"PlaySoundEffects";
+static NSString* const kPreferenceKeyPlayHapticFeedback = @"PlayHapticFeedback";
 
 static NSUInteger const kActivationMethodPredictionBar = 0;
 static NSUInteger const kActivationMethodDictationKey = 1;
@@ -29,3 +31,5 @@ static BOOL const kPreferenceKeyAutomaticallyPasteDefaultValue = YES;
 static BOOL const kPreferenceKeyAddSongDotLinkOptionDefaultValue = YES;
 static BOOL const kPreferenceKeyAddTranslateOptionDefaultValue = YES;
 static double const kPreferenceKeyHeightInPointsDefaultValue = 480.0;
+static BOOL const kPreferenceKeyPlaySoundEffectsDefaultValue = YES;
+static BOOL const kPreferenceKeyPlayHapticFeedbackDefaultValue = YES;

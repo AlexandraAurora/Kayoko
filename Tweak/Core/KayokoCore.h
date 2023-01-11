@@ -21,6 +21,7 @@ OBJC_EXTERN BOOL pfSaveImages;
 OBJC_EXTERN BOOL pfAutomaticallyPaste;
 OBJC_EXTERN BOOL pfAddTranslateOption;
 OBJC_EXTERN BOOL pfAddSongDotLinkOption;
+OBJC_EXTERN BOOL pfPlaySoundEffects;
 
 OBJC_EXTERN CGFloat pfHeightInPoints;
 

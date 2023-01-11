@@ -1,3 +1,3 @@
 #!/bin/sh
-
-launchctl unload /Library/LaunchDaemons/dev.traurige.kayokod.plist;
+launchctl unload -w /Library/LaunchDaemons/dev.traurige.kayokod.plist > /dev/null 2>&1
+exit 0
