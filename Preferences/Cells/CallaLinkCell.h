@@ -9,11 +9,11 @@
 #import <Preferences/PSSpecifier.h>
 
 @interface CallaLinkCell : PSTableCell
-@property(nonatomic, retain)UILabel* label;
-@property(nonatomic, retain)UILabel* subtitleLabel;
-@property(nonatomic, retain)UIView* tapRecognizerView;
-@property(nonatomic, retain)UITapGestureRecognizer* tap;
-@property(nonatomic, retain)NSString* title;
-@property(nonatomic, retain)NSString* subtitle;
-@property(nonatomic, retain)NSString* url;
+@property (nonatomic, strong) UILabel* label;
+@property (nonatomic, strong) UILabel* subtitleLabel;
+@property (nonatomic, strong) UIView* tapRecognizerView;
+@property (nonatomic, strong) UITapGestureRecognizer* tap;
+@property (nonatomic, copy) NSString* title;
+@property (nonatomic, copy) NSString* subtitle;
+@property (nonatomic, copy) NSString* url;
 @end

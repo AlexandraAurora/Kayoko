@@ -35,8 +35,7 @@
             [[[self iconImageView] centerYAnchor] constraintEqualToAnchor:[self centerYAnchor]],
             [[[self iconImageView] leadingAnchor] constraintEqualToAnchor:[self leadingAnchor] constant:24]
         ]];
-
-
+        
         // content image view
         if ([item hasImage] || [item hasColor]) {
             [self setContentImageView:[[UIImageView alloc] init]];

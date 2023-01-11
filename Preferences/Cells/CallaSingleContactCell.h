@@ -9,13 +9,13 @@
 #import <Preferences/PSSpecifier.h>
 
 @interface CallaSingleContactCell : PSTableCell
-@property(nonatomic, retain)UIImageView* avatarImageView;
-@property(nonatomic, retain)UILabel* displayNameLabel;
-@property(nonatomic, retain)UILabel* usernameLabel;
-@property(nonatomic, retain)UIView* tapRecognizerView;
-@property(nonatomic, retain)UITapGestureRecognizer* tap;
-@property(nonatomic, retain)NSString* displayName;
-@property(nonatomic, retain)NSString* username;
-@property(nonatomic, retain)NSString* url;
+@property (nonatomic, strong) UIImageView* avatarImageView;
+@property (nonatomic, strong) UILabel* displayNameLabel;
+@property (nonatomic, strong) UILabel* usernameLabel;
+@property (nonatomic, strong) UIView* tapRecognizerView;
+@property (nonatomic, strong) UITapGestureRecognizer* tap;
+@property (nonatomic, copy) NSString* displayName;
+@property (nonatomic, copy) NSString* username;
+@property (nonatomic, copy) NSString* url;
 - (void)openUserProfile;
 @end

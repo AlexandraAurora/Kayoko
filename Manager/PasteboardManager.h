@@ -22,10 +22,10 @@ static NSString* const kHistoryKeyFavorites = @"favorites";
     NSUInteger _lastChangeCount;
     NSFileManager* _fileManager;
 }
-@property(atomic, assign)NSUInteger maximumHistoryAmount;
-@property(atomic, assign)BOOL saveText;
-@property(atomic, assign)BOOL saveImages;
-@property(atomic, assign)BOOL automaticallyPaste;
+@property (nonatomic, assign) NSUInteger maximumHistoryAmount;
+@property (nonatomic, assign) BOOL saveText;
+@property (nonatomic, assign) BOOL saveImages;
+@property (nonatomic, assign) BOOL automaticallyPaste;
 + (instancetype)sharedInstance;
 - (void)pullPasteboardChanges;
 - (void)addPasteboardItem:(PasteboardItem *)item toHistoryWithKey:(NSString *)historyKey;

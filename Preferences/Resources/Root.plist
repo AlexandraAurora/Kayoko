@@ -118,7 +118,7 @@
 			<key>defaults</key>
 			<string>dev.traurige.kayoko.preferences</string>
 			<key>label</key>
-			<string>Activation Method:</string>
+			<string>Activation Method</string>
 			<key>key</key>
 			<string>ActivationMethod</string>
 			<key>validValues</key>
@@ -178,6 +178,39 @@
 			<string>AddTranslateOption</string>
 			<key>label</key>
 			<string>Add a Translate Option</string>
+			<key>PostNotification</key>
+			<string>dev.traurige.kayoko.preferences.reload</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Appearance</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>label</key>
+			<string>Height (Points)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<real>480</real>
+			<key>defaults</key>
+			<string>dev.traurige.kayoko.preferences</string>
+			<key>key</key>
+			<string>HeightInPoints</string>
+			<key>min</key>
+			<real>200</real>
+			<key>max</key>
+			<real>600</real>
+			<key>showValue</key>
+			<true />
+			<key>isSegmented</key>
+			<false />
 			<key>PostNotification</key>
 			<string>dev.traurige.kayoko.preferences.reload</string>
 		</dict>

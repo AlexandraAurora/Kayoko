@@ -2,8 +2,8 @@
 #import <WebKit/WebKit.h>
 
 @interface KayokoPreviewView : UIView <WKNavigationDelegate>
-@property(nonatomic, retain)UITextView* textView;
-@property(nonatomic, retain)UIImageView* imageView;
-@property(nonatomic, retain)WKWebView* webView;
+@property (nonatomic, strong) UITextView* textView;
+@property (nonatomic, strong) UIImageView* imageView;
+@property (nonatomic, strong) WKWebView* webView;
 - (void)reset;
 @end

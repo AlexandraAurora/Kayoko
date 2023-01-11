@@ -10,19 +10,19 @@
 #import "Views/KayokoView.h"
 #import <Cephei/HBPreferences.h>
 
-static CGFloat const kHeight = 480;
+OBJC_EXTERN KayokoView* kayokoView;
 
-KayokoView* kayokoView;
+OBJC_EXTERN HBPreferences* preferences;
+OBJC_EXTERN BOOL pfEnabled;
 
-HBPreferences* preferences;
-BOOL pfEnabled;
+OBJC_EXTERN NSUInteger pfMaximumHistoryAmount;
+OBJC_EXTERN BOOL pfSaveText;
+OBJC_EXTERN BOOL pfSaveImages;
+OBJC_EXTERN BOOL pfAutomaticallyPaste;
+OBJC_EXTERN BOOL pfAddTranslateOption;
+OBJC_EXTERN BOOL pfAddSongDotLinkOption;
 
-NSUInteger pfMaximumHistoryAmount;
-BOOL pfSaveText;
-BOOL pfSaveImages;
-BOOL pfAutomaticallyPaste;
-BOOL pfAddTranslateOption;
-BOOL pfAddSongDotLinkOption;
+OBJC_EXTERN CGFloat pfHeightInPoints;
 
 @interface UIStatusBarWindow  : UIWindow
 @end

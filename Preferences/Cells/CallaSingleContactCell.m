@@ -18,9 +18,21 @@
 
         // avatar image view
         [self setAvatarImageView:[[UIImageView alloc] init]];
-
+        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul), ^{
-            UIImage* avatar = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.traurige.dev/v1/avatar?username=%@", [self username]]]]];
+            NSString* cacheDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            NSString* avatarPath = [cacheDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@.png", NSStringFromClass([self class]), [self username]]];
+            UIImage* avatar = nil;
+            if (!avatar) {
+                avatar = [UIImage imageWithContentsOfFile:avatarPath];
+            }
+            if (!avatar) {
+                NSData* avatarData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.traurige.dev/v1/avatar?username=%@", [self username]]]];
+                if (avatarData) {
+                    [avatarData writeToFile:avatarPath atomically:YES];
+                }
+                avatar = [UIImage imageWithData:avatarData];
+            }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [UIView transitionWithView:[self avatarImageView] duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
                     [[self avatarImageView] setImage:avatar];

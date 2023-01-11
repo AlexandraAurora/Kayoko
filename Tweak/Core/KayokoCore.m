@@ -7,6 +7,20 @@
 
 #import "KayokoCore.h"
 
+KayokoView* kayokoView = nil;
+
+HBPreferences* preferences = nil;
+BOOL pfEnabled = kPreferenceKeyEnabledDefaultValue;
+
+NSUInteger pfMaximumHistoryAmount = kPreferenceKeyMaximumHistoryAmountDefaultValue;
+BOOL pfSaveText = kPreferenceKeySaveTextDefaultValue;
+BOOL pfSaveImages = kPreferenceKeySaveImagesDefaultValue;
+BOOL pfAutomaticallyPaste = kPreferenceKeyAutomaticallyPasteDefaultValue;
+BOOL pfAddTranslateOption = kPreferenceKeyAddTranslateOptionDefaultValue;
+BOOL pfAddSongDotLinkOption = kPreferenceKeyAddSongDotLinkOptionDefaultValue;
+
+CGFloat pfHeightInPoints = kPreferenceKeyHeightInPointsDefaultValue;
+
 #pragma mark - Class hooks
 
 // UIStatusBarWindow is sick because it's present everywhere and doesn't need uikit injection
@@ -17,7 +31,8 @@ static void override_UIStatusBarWindow_initWithFrame(UIStatusBarWindow* self, SE
 
     if (!kayokoView) {
         CGRect bounds = [[UIScreen mainScreen] bounds];
-        kayokoView = [[KayokoView alloc] initWithFrame:CGRectMake(0, bounds.size.height - kHeight, bounds.size.width, kHeight)];
+        CGRect kayokoViewFrame = CGRectMake(0, bounds.size.height - pfHeightInPoints, bounds.size.width, pfHeightInPoints);
+        kayokoView = [[KayokoView alloc] initWithFrame:kayokoViewFrame];
         [kayokoView setAddTranslateOption:pfAddTranslateOption];
         [kayokoView setAddSongDotLinkOption:pfAddSongDotLinkOption];
         [self addSubview:kayokoView];
@@ -50,7 +65,7 @@ static void reload() {
 
 #pragma mark - Preferences
 
-static void load_preferences() {
+static void load_preferences(CFNotificationCenterRef center, void *observer, CFNotificationName name, const void *object, CFDictionaryRef userInfo) {
     preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
     [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
     [preferences registerUnsignedInteger:&pfMaximumHistoryAmount default:kPreferenceKeyMaximumHistoryAmountDefaultValue forKey:kPreferenceKeyMaximumHistoryAmount];
@@ -59,6 +74,7 @@ static void load_preferences() {
     [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPaste forKey:kPreferenceKeyAutomaticallyPaste];
     [preferences registerBool:&pfAddSongDotLinkOption default:kPreferenceKeyAddSongDotLinkOptionDefaultValue forKey:kPreferenceKeyAddSongDotLinkOption];
     [preferences registerBool:&pfAddTranslateOption default:kPreferenceKeyAddTranslateOptionDefaultValue forKey:kPreferenceKeyAddTranslateOption];
+    [preferences registerDouble:&pfHeightInPoints default:kPreferenceKeyHeightInPointsDefaultValue forKey:kPreferenceKeyHeightInPoints];
 
     [[PasteboardManager sharedInstance] setMaximumHistoryAmount:pfMaximumHistoryAmount];
     [[PasteboardManager sharedInstance] setSaveText:pfSaveText];
@@ -67,12 +83,19 @@ static void load_preferences() {
 
     [kayokoView setAddTranslateOption:pfAddTranslateOption];
     [kayokoView setAddSongDotLinkOption:pfAddSongDotLinkOption];
+
+    if (name)
+    {
+        CGRect bounds = [[UIScreen mainScreen] bounds];
+        CGRect kayokoViewFrame = CGRectMake(0, bounds.size.height - pfHeightInPoints, bounds.size.width, pfHeightInPoints);
+        [kayokoView setFrame:kayokoViewFrame];
+    }
 }
 
 #pragma mark - Constructor
 
 __attribute((constructor)) static void init() {
-    load_preferences();
+    load_preferences(NULL, NULL, NULL, NULL, NULL);
 
     if (!pfEnabled) {
         return;

@@ -197,7 +197,7 @@
 
     if ([[self historyTableView] isHidden]) {
         NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
-        [[self favoritesTableView] reloadDataWithItems:items];
+        [[self historyTableView] reloadDataWithItems:items];
 
         [self showContentView:[self historyTableView] andHideContentView:[self favoritesTableView] reverse:YES];
 

@@ -10,10 +10,10 @@
 #import "../../../Manager/PasteboardManager.h"
 
 @interface KayokoTableView : UITableView <UITableViewDelegate, UITableViewDataSource>
-@property(atomic, assign)NSString* name;
-@property(nonatomic, retain)NSArray* items;
-@property(atomic, assign)BOOL addTranslateOption;
-@property(atomic, assign)BOOL addSongDotLinkOption;
+@property (nonatomic, copy) NSString* name;
+@property (nonatomic, strong) NSArray* items;
+@property (nonatomic, assign) BOOL addTranslateOption;
+@property (nonatomic, assign) BOOL addSongDotLinkOption;
 - (instancetype)initWithName:(NSString *)name;
 - (void)reloadDataWithItems:(NSArray *)items;
 @end

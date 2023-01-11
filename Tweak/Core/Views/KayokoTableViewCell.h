@@ -12,10 +12,10 @@
 #import "../../../Utils/ColorUtil.h"
 
 @interface KayokoTableViewCell : UITableViewCell
-@property(nonatomic, retain)UIImageView* iconImageView;
-@property(nonatomic, retain)UILabel* headerLabel;
-@property(nonatomic, retain)UILabel* contentLabel;
-@property(nonatomic, retain)UIImageView* contentImageView;
+@property (nonatomic, strong) UIImageView* iconImageView;
+@property (nonatomic, strong) UILabel* headerLabel;
+@property (nonatomic, strong) UILabel* contentLabel;
+@property (nonatomic, strong) UIImageView* contentImageView;
 - (instancetype)initWithStyle:(UITableViewCellStyle)style andItem:(PasteboardItem *)item reuseIdentifier:(NSString *)reuseIdentifier;
 @end
 

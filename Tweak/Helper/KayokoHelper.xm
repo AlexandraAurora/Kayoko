@@ -1,5 +1,5 @@
 //
-//  KayokoHelper.m
+//  KayokoHelper.xm
 //  Kayoko
 //
 //  Created by Alexandra (@Traurige)
@@ -132,6 +132,45 @@ static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* 
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreHide, nil, nil, YES);
 }
 
+%group DictationAppearance
+
+%hook UIKeyboardDockItem
+
+- (id)initWithImageName:(NSString *)arg1 identifier:(id)arg2 {
+    if ([arg1 isEqualToString:@"mic"])
+        return %orig(@"doc.on.clipboard", arg2);
+    else if ([arg1 isEqualToString:@"mic.fill"])
+        return %orig(@"doc.on.clipboard.fill", arg2);
+    return %orig;
+}
+
+- (void)setImageName:(NSString *)arg1 {
+    if ([arg1 isEqualToString:@"mic"])
+        return %orig(@"doc.on.clipboard");
+    else if ([arg1 isEqualToString:@"mic.fill"])
+        return %orig(@"doc.on.clipboard.fill");
+    return %orig;
+}
+
+%end
+
+%hook UIKeyboardDockItemButton
+
+- (CGRect)imageRectForContentRect:(CGRect)arg1 {
+    CGRect origRect = %orig;
+    if (ABS(origRect.size.width - origRect.size.height) > 1.0) {
+        // adjust image to its 86% but keep its center
+        CGSize newSize = CGSizeMake(origRect.size.width * 0.86, origRect.size.height * 0.86);
+        CGPoint newOrigin = CGPointMake(origRect.origin.x + (origRect.size.width - newSize.width) / 2, origRect.origin.y + (origRect.size.height - newSize.height) / 2);
+        return CGRectMake(newOrigin.x, newOrigin.y, newSize.width, newSize.height);
+    }
+    return origRect;
+}
+
+%end
+
+%end
+
 #pragma mark - Notification callbacks
 
 static void paste() {
@@ -208,6 +247,7 @@ __attribute((constructor)) static void init() {
         MSHookMessageEx(objc_getClass("UISystemKeyboardDockController"), @selector(dictationItemButtonWasPressed:withEvent:), (IMP)&override_UISystemKeyboardDockController_dictationItemButtonWasPressed_withEvent, nil);
         MSHookMessageEx(objc_getClass("UIKeyboardImpl"), @selector(shouldShowDictationKey), (IMP)&override_UIKeyboardImpl_shouldShowDictationKey, nil);
         MSHookMessageEx(objc_getClass("UIKeyboardLayoutStar"), @selector(keyHitTest:), (IMP)&override_UIKeyboardLayoutStar_keyHitTest, (IMP *)&orig_UIKeyboardLayoutStar_keyHitTest);
+        %init(DictationAppearance);
     }
     MSHookMessageEx(objc_getClass("UIKeyboardLayoutStar"), @selector(didMoveToWindow), (IMP)&override_UIKeyboardLayoutStar_didMoveToWindow, (IMP *)&orig_UIKeyboardLayoutStar_didMoveToWindow);
 
