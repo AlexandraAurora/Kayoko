@@ -159,8 +159,8 @@ static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* 
 - (CGRect)imageRectForContentRect:(CGRect)arg1 {
     CGRect origRect = %orig;
     if (ABS(origRect.size.width - origRect.size.height) > 1.0) {
-        // adjust image to its 86% but keep its center
-        CGSize newSize = CGSizeMake(origRect.size.width * 0.86, origRect.size.height * 0.86);
+        // adjust image to its 83% but keep its center
+        CGSize newSize = CGSizeMake(origRect.size.width * 0.833, origRect.size.height * 0.833);
         CGPoint newOrigin = CGPointMake(origRect.origin.x + (origRect.size.width - newSize.width) / 2, origRect.origin.y + (origRect.size.height - newSize.height) / 2);
         return CGRectMake(newOrigin.x, newOrigin.y, newSize.width, newSize.height);
     }
@@ -173,14 +173,60 @@ static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* 
 
 #pragma mark - Notification callbacks
 
+static BOOL _kApplicationIsInForeground = YES;
+
+%group AppEvents
+
+%hook UIKeyboardImpl
++ (void)applicationDidBecomeActive:(id)arg1 {
+    _kApplicationIsInForeground = YES;
+    %orig;
+}
++ (void)applicationWillResignActive:(id)arg1 {
+    _kApplicationIsInForeground = NO;
+    %orig;
+}
+%end
+
+%end
+
+@interface UIKeyboardTaskQueue : NSObject
+- (void)addTask:(id)arg1;
+- (void)performSingleTask:(id)arg1;
+@end
+
+@interface UIKBInputDelegateManager (Private)  // iOS 15
+- (void)insertText:(id)arg1 updateInputSource:(BOOL)arg2;
+- (void)clearForwardingInputDelegateAndResign:(BOOL)arg1;
+@end
+
+@interface UIKeyboardImpl (Private)
+- (void)addInputString:(NSString *)arg1 withFlags:(unsigned long long)arg2 executionContext:(id)arg3;
+- (void)completeAddInputString:(NSString *)arg1;
+- (void)completeAddInputString:(NSString *)arg1 generateCandidates:(BOOL)arg2;
+- (void)clearForwardingInputDelegateAndResign:(BOOL)arg1;
+- (void)updateReturnKey;
+- (UIKBInputDelegateManager *)inputDelegateManager;
+- (UIKeyboardTaskQueue *)taskQueue;
+@end
+
 static void paste() {
+    if (!_kApplicationIsInForeground) return;
     UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
     if ([pasteboard hasStrings]) {
+        NSString *pbs = [pasteboard string];
+        UIKeyboardImpl *kb = [%c(UIKeyboardImpl) activeInstance];
         if (iOS15) {
-            UIKBInputDelegateManager* delegateManager = [[objc_getClass("UIKeyboardImpl") activeInstance] inputDelegateManager];
-            [delegateManager insertText:[pasteboard string]];
+            UIKBInputDelegateManager* delegateManager = [kb inputDelegateManager];
+            [delegateManager insertText:pbs];
+            if ([delegateManager respondsToSelector:@selector(clearForwardingInputDelegateAndResign:)])
+                [delegateManager clearForwardingInputDelegateAndResign:YES];
+            [kb updateReturnKey];
         } else {
-            [[objc_getClass("UIKeyboardImpl") activeInstance] insertText:[pasteboard string]];
+            [kb insertText:pbs];
+            if ([kb respondsToSelector:@selector(clearForwardingInputDelegateAndResign:)])
+                [kb clearForwardingInputDelegateAndResign:YES];
+            [kb updateReturnKey];
         }
     }
 }
@@ -250,8 +296,9 @@ __attribute((constructor)) static void init() {
         %init(DictationAppearance);
     }
     MSHookMessageEx(objc_getClass("UIKeyboardLayoutStar"), @selector(didMoveToWindow), (IMP)&override_UIKeyboardLayoutStar_didMoveToWindow, (IMP *)&orig_UIKeyboardLayoutStar_didMoveToWindow);
+    %init(AppEvents);
 
     if (pfAutomaticallyPaste) {
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)paste, (CFStringRef)kNotificationKeyHelperPaste, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)paste, (CFStringRef)kNotificationKeyHelperPaste, NULL, (CFNotificationSuspensionBehavior)CFNotificationSuspensionBehaviorDrop);
     }
 }
