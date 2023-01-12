@@ -7,6 +7,14 @@
 
 #import "KayokoHelper.h"
 
+BOOL shouldShowCustomSuggestions = NO;
+
+HBPreferences* preferences = nil;
+BOOL pfEnabled = YES;
+NSUInteger pfActivationMethod = 0;
+BOOL pfAutomaticallyPaste = YES;
+BOOL pfDisablePasteTips = NO;
+
 #pragma mark - Class hooks
 
 static void (* orig_UIKeyboardAutocorrectionController_setTextSuggestionList)(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList);
@@ -61,7 +69,7 @@ static void override_UIPredictionViewController_predictionView_didSelectCandidat
         if ([[candidate label] isEqualToString:@"History"]) {
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreShow, nil, nil, YES);
         } else if ([[candidate label] isEqualToString:@"Copy"]) {
-            if (iOS15) {
+            if (@available(iOS 15.0, *)) {
                 UIKBInputDelegateManager* delegateManager = [[objc_getClass("UIKeyboardImpl") activeInstance] inputDelegateManager];
                 UITextRange* range = [delegateManager selectedTextRange];
                 NSString* text = [delegateManager textInRange:range];
@@ -97,7 +105,7 @@ static void override_UIKeyboardLayoutStar_setKeyplaneName(UIKeyboardLayoutStar* 
     // the custom candidates should only be shown on the more (123) and more-alternate (#+=) keyplane
     shouldShowCustomSuggestions = [name isEqualToString:@"numbers-and-punctuation"] || [name isEqualToString:@"numbers-and-punctuation-alternate"];
 
-    if (iOS15) {
+    if (@available(iOS 15.0, *)) {
         [[[objc_getClass("UIKeyboardImpl") activeInstance] autocorrectionController] setAutocorrectionList:nil];
     } else {
         [[[objc_getClass("UIKeyboardImpl") activeInstance] autocorrectionController] setTextSuggestionList:nil];
@@ -216,7 +224,7 @@ static void paste() {
     if ([pasteboard hasStrings]) {
         NSString *pbs = [pasteboard string];
         UIKeyboardImpl *kb = [%c(UIKeyboardImpl) activeInstance];
-        if (iOS15) {
+        if (@available(iOS 15.0, *)) {
             UIKBInputDelegateManager* delegateManager = [kb inputDelegateManager];
             [delegateManager insertText:pbs];
             if ([delegateManager respondsToSelector:@selector(clearForwardingInputDelegateAndResign:)])
@@ -231,6 +239,26 @@ static void paste() {
     }
 }
 
+#pragma mark - Druid UI
+
+%group DruidUI
+
+%hook DRPasteAnnouncer
+
+- (void)announceDeniedPaste {
+    if (pfDisablePasteTips) return;
+    %orig;
+}
+
+- (void)announcePaste:(id)arg1 {
+    if (pfDisablePasteTips) return;
+    %orig;
+}
+
+%end
+
+%end
+
 #pragma mark - Preferences
 
 static void load_preferences() {
@@ -238,6 +266,7 @@ static void load_preferences() {
     [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
     [preferences registerUnsignedInteger:&pfActivationMethod default:kPreferenceKeyActivationMethodDefaultValue forKey:kPreferenceKeyActivationMethod];
     [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPasteDefaultValue forKey:kPreferenceKeyAutomaticallyPaste];
+    [preferences registerBool:&pfDisablePasteTips default:kPreferenceKeyDisablePasteTipsDefaultValue forKey:kPreferenceKeyDisablePasteTips];
 }
 
 #pragma mark - Constructor
@@ -253,11 +282,20 @@ __attribute((constructor)) static void init() {
         return;
     }
 
+    NSArray* args = [[NSProcessInfo processInfo] arguments];
     NSString* processName = [[NSProcessInfo processInfo] processName];
-    BOOL isSpringBoard = [@"SpringBoard" isEqualToString:processName];
+    NSString* executablePath = [args firstObject];
+
+    BOOL isDruid = [executablePath hasPrefix:@"/System/Library/"] && [processName isEqualToString:@"druid"];
+    if (isDruid) {
+        %init(DruidUI);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)load_preferences, (CFStringRef)kNotificationKeyPreferencesReload, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
+        return;
+    }
+
+    BOOL isSpringBoard = [executablePath hasPrefix:@"/System/Library/"] && [@"SpringBoard" isEqualToString:processName];
 
     BOOL shouldLoad = NO;
-    NSArray* args = [[objc_getClass("NSProcessInfo") processInfo] arguments];
     NSUInteger count = [args count];
     if (count != 0) {
         NSString* executablePath = args[0];
@@ -281,7 +319,7 @@ __attribute((constructor)) static void init() {
     }
 
     if (pfActivationMethod == kActivationMethodPredictionBar) {
-        if (iOS15) {
+        if (@available(iOS 15.0, *)) {
             MSHookMessageEx(objc_getClass("UIKeyboardAutocorrectionController"), @selector(setAutocorrectionList:), (IMP)&override_UIKeyboardAutocorrectionController_setAutocorrectionList, (IMP *)&orig_UIKeyboardAutocorrectionController_setAutocorrectionList);
         } else {
             MSHookMessageEx(objc_getClass("UIKeyboardAutocorrectionController"), @selector(setTextSuggestionList:), (IMP)&override_UIKeyboardAutocorrectionController_setTextSuggestionList, (IMP *)&orig_UIKeyboardAutocorrectionController_setTextSuggestionList);
@@ -293,7 +331,9 @@ __attribute((constructor)) static void init() {
         MSHookMessageEx(objc_getClass("UISystemKeyboardDockController"), @selector(dictationItemButtonWasPressed:withEvent:), (IMP)&override_UISystemKeyboardDockController_dictationItemButtonWasPressed_withEvent, nil);
         MSHookMessageEx(objc_getClass("UIKeyboardImpl"), @selector(shouldShowDictationKey), (IMP)&override_UIKeyboardImpl_shouldShowDictationKey, nil);
         MSHookMessageEx(objc_getClass("UIKeyboardLayoutStar"), @selector(keyHitTest:), (IMP)&override_UIKeyboardLayoutStar_keyHitTest, (IMP *)&orig_UIKeyboardLayoutStar_keyHitTest);
-        %init(DictationAppearance);
+        if (@available(iOS 15.0, *)) {
+            %init(DictationAppearance);
+        }
     }
     MSHookMessageEx(objc_getClass("UIKeyboardLayoutStar"), @selector(didMoveToWindow), (IMP)&override_UIKeyboardLayoutStar_didMoveToWindow, (IMP *)&orig_UIKeyboardLayoutStar_didMoveToWindow);
     %init(AppEvents);

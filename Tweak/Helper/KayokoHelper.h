@@ -11,14 +11,13 @@
 #import "../../Preferences/PreferenceKeys.h"
 #import <Cephei/HBPreferences.h>
 
-#define iOS15 [[[UIDevice currentDevice] systemVersion] floatValue] >= 15.0
+OBJC_EXTERN BOOL shouldShowCustomSuggestions;
 
-BOOL shouldShowCustomSuggestions = NO;
-
-HBPreferences* preferences;
-BOOL pfEnabled;
-NSUInteger pfActivationMethod;
-BOOL pfAutomaticallyPaste;
+OBJC_EXTERN HBPreferences* preferences;
+OBJC_EXTERN BOOL pfEnabled;
+OBJC_EXTERN NSUInteger pfActivationMethod;
+OBJC_EXTERN BOOL pfAutomaticallyPaste;
+OBJC_EXTERN BOOL pfDisablePasteTips;
 
 static void paste();
 

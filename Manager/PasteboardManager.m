@@ -183,6 +183,7 @@
     }
 
     // the given item gets removed, as the pasteboard is updated with the same item
+    [_pasteboard changeCount];
     [self removePasteboardItem:item fromHistoryWithKey:historyKey shouldRemoveImage:YES];
 
     // automatic paste should not occur for asynchronous operations
