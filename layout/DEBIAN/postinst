@@ -4,4 +4,5 @@ if [ -d /var/mobile/Documents/dev.traurige/ ]; then
     chown -R mobile:mobile /var/mobile/Documents/dev.traurige/
 fi
 
-launchctl load -w /Library/LaunchDaemons/dev.traurige.kayokod.plist;
+launchctl load -w /Library/LaunchDaemons/dev.traurige.kayokod.plist
+launchctl kill 9 system/com.apple.DragUI.druid
