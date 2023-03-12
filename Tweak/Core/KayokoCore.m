@@ -6,6 +6,7 @@
 //
 
 #import "KayokoCore.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 #pragma mark - Class hooks
 
@@ -17,7 +18,8 @@ static void override_UIStatusBarWindow_initWithFrame(UIStatusBarWindow* self, SE
 
     if (!kayokoView) {
         CGRect bounds = [[UIScreen mainScreen] bounds];
-        kayokoView = [[KayokoView alloc] initWithFrame:CGRectMake(0, bounds.size.height - kHeight, bounds.size.width, kHeight)];
+        CGRect kayokoViewFrame = CGRectMake(0, bounds.size.height - pfHeightInPoints, bounds.size.width, pfHeightInPoints);
+        kayokoView = [[KayokoView alloc] initWithFrame:kayokoViewFrame];
         [kayokoView setAddTranslateOption:pfAddTranslateOption];
         [kayokoView setAddSongDotLinkOption:pfAddSongDotLinkOption];
         [self addSubview:kayokoView];
@@ -48,9 +50,27 @@ static void reload() {
     }
 }
 
+static void pasted() {
+    if (pfPlaySoundEffects) {
+        /* I don’t like these fixed paths, whatever. */
+        static dispatch_once_t onceToken;
+        static SystemSoundID soundID;
+        dispatch_once(&onceToken, ^{
+            OSStatus err = AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:@"/Library/PreferenceBundles/KayokoPreferences.bundle/Paste.aiff"], &soundID);
+            if (err != kAudioServicesNoError) {
+                err = AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:@"/var/jb/Library/PreferenceBundles/KayokoPreferences.bundle/Paste.aiff"], &soundID);
+            }
+        });
+        AudioServicesPlaySystemSound(soundID);
+    }
+    if (pfPlayHapticFeedback) {
+        AudioServicesPlaySystemSound(1519);
+    }
+}
+
 #pragma mark - Preferences
 
-static void load_preferences() {
+static void load_preferences(CFNotificationCenterRef center, void *observer, CFNotificationName name, const void *object, CFDictionaryRef userInfo) {
     preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
     [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
     [preferences registerUnsignedInteger:&pfMaximumHistoryAmount default:kPreferenceKeyMaximumHistoryAmountDefaultValue forKey:kPreferenceKeyMaximumHistoryAmount];
@@ -59,6 +79,9 @@ static void load_preferences() {
     [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPaste forKey:kPreferenceKeyAutomaticallyPaste];
     [preferences registerBool:&pfAddSongDotLinkOption default:kPreferenceKeyAddSongDotLinkOptionDefaultValue forKey:kPreferenceKeyAddSongDotLinkOption];
     [preferences registerBool:&pfAddTranslateOption default:kPreferenceKeyAddTranslateOptionDefaultValue forKey:kPreferenceKeyAddTranslateOption];
+    [preferences registerDouble:&pfHeightInPoints default:kPreferenceKeyHeightInPointsDefaultValue forKey:kPreferenceKeyHeightInPoints];
+    [preferences registerBool:&pfPlaySoundEffects default:kPreferenceKeyPlaySoundEffectsDefaultValue forKey:kPreferenceKeyPlaySoundEffects];
+    [preferences registerBool:&pfPlayHapticFeedback default:kPreferenceKeyPlayHapticFeedbackDefaultValue forKey:kPreferenceKeyPlayHapticFeedback];
 
     [[PasteboardManager sharedInstance] setMaximumHistoryAmount:pfMaximumHistoryAmount];
     [[PasteboardManager sharedInstance] setSaveText:pfSaveText];
@@ -67,12 +90,18 @@ static void load_preferences() {
 
     [kayokoView setAddTranslateOption:pfAddTranslateOption];
     [kayokoView setAddSongDotLinkOption:pfAddSongDotLinkOption];
+
+    if (name) {
+        CGRect bounds = [[UIScreen mainScreen] bounds];
+        CGRect kayokoViewFrame = CGRectMake(0, bounds.size.height - pfHeightInPoints, bounds.size.width, pfHeightInPoints);
+        [kayokoView setFrame:kayokoViewFrame];
+    }
 }
 
 #pragma mark - Constructor
 
 __attribute((constructor)) static void init() {
-    load_preferences();
+    load_preferences(NULL, NULL, NULL, NULL, NULL);
 
     if (!pfEnabled) {
         return;
@@ -85,4 +114,5 @@ __attribute((constructor)) static void init() {
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)hide, (CFStringRef)kNotificationKeyCoreHide, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)reload, (CFStringRef)kNotificationKeyCoreReload, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)load_preferences, (CFStringRef)kNotificationKeyPreferencesReload, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)pasted, (CFStringRef)kNotificationKeyHelperPaste, NULL, (CFNotificationSuspensionBehavior)kNilOptions);
 }

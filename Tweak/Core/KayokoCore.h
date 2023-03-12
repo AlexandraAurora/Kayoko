@@ -10,8 +10,6 @@
 #import "Views/KayokoView.h"
 #import <Cephei/HBPreferences.h>
 
-static CGFloat const kHeight = 480;
-
 KayokoView* kayokoView;
 
 HBPreferences* preferences;
@@ -23,6 +21,9 @@ BOOL pfSaveImages;
 BOOL pfAutomaticallyPaste;
 BOOL pfAddTranslateOption;
 BOOL pfAddSongDotLinkOption;
+BOOL pfPlaySoundEffects;
+BOOL pfPlayHapticFeedback;
+CGFloat pfHeightInPoints;
 
 @interface UIStatusBarWindow  : UIWindow
 @end
