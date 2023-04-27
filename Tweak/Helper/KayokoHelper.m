@@ -136,13 +136,8 @@ static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* 
 
 static void paste() {
     UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-    if ([pasteboard hasStrings]) {
-        if (iOS15) {
-            UIKBInputDelegateManager* delegateManager = [[objc_getClass("UIKeyboardImpl") activeInstance] inputDelegateManager];
-            [delegateManager insertText:[pasteboard string]];
-        } else {
-            [[objc_getClass("UIKeyboardImpl") activeInstance] insertText:[pasteboard string]];
-        }
+    if ([pasteboard hasStrings] || [pasteboard hasImages]) {
+        [[UIApplication sharedApplication] sendAction:@selector(paste:) to:nil from:nil forEvent:nil];
     }
 }
 
