@@ -7,7 +7,7 @@
 
 #import "KayokoCore.h"
 
-#pragma mark - Class hooks
+#pragma mark - UIStatusBarWindow class hooks
 
 // UIStatusBarWindow is sick because it's present everywhere and doesn't need uikit injection
 // it also prevents sandbox issues as the core runs on springboard (which has fs r/w)
@@ -71,7 +71,7 @@ static void load_preferences() {
 
 #pragma mark - Constructor
 
-__attribute((constructor)) static void init() {
+__attribute((constructor)) static void initialize() {
     load_preferences();
 
     if (!pfEnabled) {

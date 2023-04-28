@@ -7,7 +7,7 @@
 
 #import "KayokoHelper.h"
 
-#pragma mark - Class hooks
+#pragma mark - UIKeyboardAutocorrectionController class hooks
 
 static void (* orig_UIKeyboardAutocorrectionController_setTextSuggestionList)(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList);
 static void override_UIKeyboardAutocorrectionController_setTextSuggestionList(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList) {
@@ -26,6 +26,21 @@ static void override_UIKeyboardAutocorrectionController_setAutocorrectionList(UI
         orig_UIKeyboardAutocorrectionController_setAutocorrectionList(self, _cmd, textSuggestionList);
     }
 }
+
+static TIAutocorrectionList* createAutocorrectionList() {
+    NSArray* labels = @[@"History", @"Copy", @"Paste"];
+    NSMutableArray* candidates = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < 3; i++) {
+        TIZephyrCandidate* candidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
+        [candidate setLabel:labels[i]];
+        [candidate setFromBundleId:@"dev.traurige.kayoko"];
+        [candidates addObject:candidate];
+    }
+
+    return [objc_getClass("TIAutocorrectionList") listWithAutocorrection:nil predictions:candidates emojiList:nil];
+}
+
+#pragma mark - UIPredictionViewController class hooks
 
 static void (* orig_UIPredictionViewController_predictionView_didSelectCandidate)(UIPredictionViewController* self, SEL _cmd, TUIPredictionView* predictionView, TIZephyrCandidate* candidate);
 static void override_UIPredictionViewController_predictionView_didSelectCandidate(UIPredictionViewController* self, SEL _cmd, TUIPredictionView* predictionView, TIZephyrCandidate* candidate) {
@@ -62,6 +77,8 @@ static BOOL override_UIPredictionViewController_isVisibleForInputDelegate_inputV
     return YES;
 }
 
+#pragma mark - UIKeyboardLayoutStar class hooks
+
 static void (* orig_UIKeyboardLayoutStar_setKeyplaneName)(UIKeyboardLayoutStar* self, SEL _cmd, NSString* name);
 static void override_UIKeyboardLayoutStar_setKeyplaneName(UIKeyboardLayoutStar* self, SEL _cmd, NSString* name) {
     orig_UIKeyboardLayoutStar_setKeyplaneName(self, _cmd, name);
@@ -76,16 +93,7 @@ static void override_UIKeyboardLayoutStar_setKeyplaneName(UIKeyboardLayoutStar* 
     }
 }
 
-static BOOL override_UIKeyboardImpl_shouldShowDictationKey(UIKeyboardImpl* self, SEL _cmd) {
-    return YES;
-}
-
-// notch devices
-static void override_UISystemKeyboardDockController_dictationItemButtonWasPressed_withEvent(UISystemKeyboardDockController* self, SEL _cmd, UIEvent* event) {
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreShow, nil, nil, YES);
-}
-
-// home button devices
+// dictation trigger for home button devices
 static UIKBTree* (* orig_UIKeyboardLayoutStar_keyHitTest)(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point);
 static UIKBTree* override_UIKeyboardLayoutStar_keyHitTest(UIKeyboardLayoutStar* self, SEL _cmd, CGPoint point) {
     UIKBTree* orig = orig_UIKeyboardLayoutStar_keyHitTest(self, _cmd, point);
@@ -104,17 +112,17 @@ static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* 
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreHide, nil, nil, YES);
 }
 
-static TIAutocorrectionList* createAutocorrectionList() {
-    NSArray* labels = @[@"History", @"Copy", @"Paste"];
-    NSMutableArray* candidates = [[NSMutableArray alloc] init];
-    for (NSUInteger i = 0; i < 3; i++) {
-        TIZephyrCandidate* candidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [candidate setLabel:labels[i]];
-        [candidate setFromBundleId:@"dev.traurige.kayoko"];
-        [candidates addObject:candidate];
-    }
+#pragma mark - UIKeyboardImpl class hooks
 
-    return [objc_getClass("TIAutocorrectionList") listWithAutocorrection:nil predictions:candidates emojiList:nil];
+static BOOL override_UIKeyboardImpl_shouldShowDictationKey(UIKeyboardImpl* self, SEL _cmd) {
+    return YES;
+}
+
+#pragma mark - UISystemKeyboardDockController class hooks
+
+// dictation trigger for notch devices
+static void override_UISystemKeyboardDockController_dictationItemButtonWasPressed_withEvent(UISystemKeyboardDockController* self, SEL _cmd, UIEvent* event) {
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreShow, nil, nil, YES);
 }
 
 #pragma mark - Notification callbacks
@@ -137,7 +145,7 @@ static void load_preferences() {
 
 #pragma mark - Constructor
 
-__attribute((constructor)) static void init() {
+__attribute((constructor)) static void initialize() {
     load_preferences();
 
     if (!pfEnabled) {
