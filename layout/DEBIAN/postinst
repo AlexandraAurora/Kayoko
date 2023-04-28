@@ -4,4 +4,8 @@ if [ -d /var/mobile/Documents/dev.traurige/ ]; then
     chown -R mobile:mobile /var/mobile/Documents/dev.traurige/
 fi
 
-launchctl load /Library/LaunchDaemons/dev.traurige.kayokod.plist;
+if [[ -e /Library/LaunchDaemons/dev.traurige.kayokod.plist ]]; then
+    launchctl load /Library/LaunchDaemons/dev.traurige.kayokod.plist;
+elif [[ -e /var/jb/Library/LaunchDaemons/dev.traurige.kayokod.plist ]]; then
+    launchctl load /var/jb/Library/LaunchDaemons/dev.traurige.kayokod.plist;
+fi
