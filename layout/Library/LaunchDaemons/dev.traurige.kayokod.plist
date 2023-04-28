@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Disabled</key>
+	<false />
 	<key>RunAtLoad</key>
-	<true/>
+	<true />
 	<key>KeepAlive</key>
-	<true/>
+	<true />
 	<key>Label</key>
 	<string>dev.traurige.kayokod</string>
 	<key>Program</key>
