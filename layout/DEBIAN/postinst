@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -d /var/mobile/Documents/dev.traurige/ ]; then
     chown -R mobile:mobile /var/mobile/Documents/dev.traurige/

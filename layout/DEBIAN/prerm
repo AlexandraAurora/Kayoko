@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ -e /Library/LaunchDaemons/dev.traurige.kayokod.plist ]]; then
     launchctl unload /Library/LaunchDaemons/dev.traurige.kayokod.plist;
