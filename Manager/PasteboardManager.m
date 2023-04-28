@@ -174,6 +174,8 @@
 }
 
 - (void)updatePasteboardWithItem:(PasteboardItem *)item fromHistoryWithKey:(NSString *)historyKey shouldAutoPaste:(BOOL)shouldAutoPaste {
+    [_pasteboard setString:@""];
+
     if ([item hasImage] && ![item hasPlainText] && ![item hasLink] && ![item hasMusicLink] && ![item hasColor]) {
         NSString* filePath = [kHistoryImagesPath stringByAppendingString:[item imageName]];
         UIImage* image = [UIImage imageWithContentsOfFile:filePath];
