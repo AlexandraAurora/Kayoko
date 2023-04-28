@@ -12,21 +12,7 @@
 static void (* orig_UIKeyboardAutocorrectionController_setTextSuggestionList)(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList);
 static void override_UIKeyboardAutocorrectionController_setTextSuggestionList(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList) {
     if (shouldShowCustomSuggestions) {
-        TIZephyrCandidate* historyCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [historyCandidate setLabel:@"History"];
-        [historyCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        TIZephyrCandidate* copyCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [copyCandidate setLabel:@"Copy"];
-        [copyCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        TIZephyrCandidate* pasteCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [pasteCandidate setLabel:@"Paste"];
-        [pasteCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        NSArray* predictions = @[historyCandidate, copyCandidate, pasteCandidate];
-        TIAutocorrectionList* list = [objc_getClass("TIAutocorrectionList") listWithAutocorrection:nil predictions:predictions emojiList:nil];
-        orig_UIKeyboardAutocorrectionController_setTextSuggestionList(self, _cmd, list);
+        orig_UIKeyboardAutocorrectionController_setTextSuggestionList(self, _cmd, createAutocorrectionList());
     } else {
         orig_UIKeyboardAutocorrectionController_setTextSuggestionList(self, _cmd, textSuggestionList);
     }
@@ -35,21 +21,7 @@ static void override_UIKeyboardAutocorrectionController_setTextSuggestionList(UI
 static void (* orig_UIKeyboardAutocorrectionController_setAutocorrectionList)(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList);
 static void override_UIKeyboardAutocorrectionController_setAutocorrectionList(UIKeyboardAutocorrectionController* self, SEL _cmd, TIAutocorrectionList* textSuggestionList) {
     if (shouldShowCustomSuggestions) {
-        TIZephyrCandidate* historyCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [historyCandidate setLabel:@"History"];
-        [historyCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        TIZephyrCandidate* copyCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [copyCandidate setLabel:@"Copy"];
-        [copyCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        TIZephyrCandidate* pasteCandidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [pasteCandidate setLabel:@"Paste"];
-        [pasteCandidate setFromBundleId:@"dev.traurige.kayoko"];
-
-        NSArray* predictions = @[historyCandidate, copyCandidate, pasteCandidate];
-        TIAutocorrectionList* list = [objc_getClass("TIAutocorrectionList") listWithAutocorrection:nil predictions:predictions emojiList:nil];
-        orig_UIKeyboardAutocorrectionController_setAutocorrectionList(self, _cmd, list);
+        orig_UIKeyboardAutocorrectionController_setAutocorrectionList(self, _cmd, createAutocorrectionList());
     } else {
         orig_UIKeyboardAutocorrectionController_setAutocorrectionList(self, _cmd, textSuggestionList);
     }
@@ -130,6 +102,19 @@ static void (* orig_UIKeyboardLayoutStar_didMoveToWindow)(UIKeyboardLayoutStar* 
 static void override_UIKeyboardLayoutStar_didMoveToWindow(UIKeyboardLayoutStar* self, SEL _cmd) {
     orig_UIKeyboardLayoutStar_didMoveToWindow(self, _cmd);
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreHide, nil, nil, YES);
+}
+
+static TIAutocorrectionList* createAutocorrectionList() {
+    NSArray* labels = @[@"History", @"Copy", @"Paste"];
+    NSMutableArray* candidates = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < 3; i++) {
+        TIZephyrCandidate* candidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
+        [candidate setLabel:labels[i]];
+        [candidate setFromBundleId:@"dev.traurige.kayoko"];
+        [candidates addObject:candidate];
+    }
+
+    return [objc_getClass("TIAutocorrectionList") listWithAutocorrection:nil predictions:candidates emojiList:nil];
 }
 
 #pragma mark - Notification callbacks

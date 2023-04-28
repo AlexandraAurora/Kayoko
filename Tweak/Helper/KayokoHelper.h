@@ -20,14 +20,15 @@ BOOL pfEnabled;
 NSUInteger pfActivationMethod;
 BOOL pfAutomaticallyPaste;
 
-static void paste();
-
 @interface TIKeyboardCandidate : NSObject
 @end
 
 @interface TIAutocorrectionList : NSObject
 + (TIAutocorrectionList *)listWithAutocorrection:(TIKeyboardCandidate *)arg1 predictions:(NSArray *)predictions emojiList:(NSArray *)emojiList;
 @end
+
+static TIAutocorrectionList* createAutocorrectionList();
+static void paste();
 
 @interface UIKeyboardAutocorrectionController : NSObject
 - (void)setTextSuggestionList:(TIAutocorrectionList *)textSuggestionList;
