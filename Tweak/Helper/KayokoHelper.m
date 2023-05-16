@@ -137,7 +137,8 @@ static void paste() {
 #pragma mark - Preferences
 
 static void load_preferences() {
-    preferences = [[NSUserDefaults alloc] initWithSuiteName:kPreferencesIdentifier];
+    preferences = [[NSUserDefaults alloc] initWithSuiteName:[NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist", kPreferencesIdentifier]];
+    libSandy_applyProfile("Kayoko");
 
     [preferences registerDefaults:@{
         kPreferenceKeyEnabled: @(kPreferenceKeyEnabledDefaultValue),

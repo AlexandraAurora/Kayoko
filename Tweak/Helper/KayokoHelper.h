@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "../../Preferences/NotificationKeys.h"
 #import "../../Preferences/PreferenceKeys.h"
+#import <libSandy.h>
 
 #define iOS15 [[[UIDevice currentDevice] systemVersion] floatValue] >= 15.0
 
