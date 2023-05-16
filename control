@@ -1,6 +1,6 @@
 Package: dev.traurige.kayoko
 Name: Kayoko
-Depends: firmware (>= 13.0), mobilesubstrate, preferenceloader, ws.hbang.common (>= 1.14)
+Depends: firmware (>= 13.0), mobilesubstrate, preferenceloader
 Version: 1.2
 Architecture: iphoneos-arm
 Description: Feature rich clipboard manager for iOS

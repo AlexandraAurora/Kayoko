@@ -137,10 +137,17 @@ static void paste() {
 #pragma mark - Preferences
 
 static void load_preferences() {
-    preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
-    [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
-    [preferences registerUnsignedInteger:&pfActivationMethod default:kPreferenceKeyActivationMethodDefaultValue forKey:kPreferenceKeyActivationMethod];
-    [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPasteDefaultValue forKey:kPreferenceKeyAutomaticallyPaste];
+    preferences = [[NSUserDefaults alloc] initWithSuiteName:kPreferencesIdentifier];
+
+    [preferences registerDefaults:@{
+        kPreferenceKeyEnabled: @(kPreferenceKeyEnabledDefaultValue),
+        kPreferenceKeyActivationMethod: @(kPreferenceKeyActivationMethodDefaultValue),
+        kPreferenceKeyAutomaticallyPaste: @(kPreferenceKeyAutomaticallyPasteDefaultValue)
+    }];
+
+    pfEnabled = [[preferences objectForKey:kPreferenceKeyEnabled] boolValue];
+    pfActivationMethod = [[preferences objectForKey:kPreferenceKeyActivationMethod] unsignedIntegerValue];
+    pfAutomaticallyPaste = [[preferences objectForKey:kPreferenceKeyAutomaticallyPaste] boolValue];
 }
 
 #pragma mark - Constructor

@@ -8,13 +8,12 @@
 #import "substrate.h"
 #import "../../Manager/PasteboardManager.h"
 #import "Views/KayokoView.h"
-#import <Cephei/HBPreferences.h>
 
 static CGFloat const kHeight = 480;
 
 KayokoView* kayokoView;
 
-HBPreferences* preferences;
+NSUserDefaults* preferences;
 BOOL pfEnabled;
 
 NSUInteger pfMaximumHistoryAmount;

@@ -9,13 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "../../Preferences/NotificationKeys.h"
 #import "../../Preferences/PreferenceKeys.h"
-#import <Cephei/HBPreferences.h>
 
 #define iOS15 [[[UIDevice currentDevice] systemVersion] floatValue] >= 15.0
 
 BOOL shouldShowCustomSuggestions = NO;
 
-HBPreferences* preferences;
+NSUserDefaults* preferences;
 BOOL pfEnabled;
 NSUInteger pfActivationMethod;
 BOOL pfAutomaticallyPaste;

@@ -51,14 +51,25 @@ static void reload() {
 #pragma mark - Preferences
 
 static void load_preferences() {
-    preferences = [[HBPreferences alloc] initWithIdentifier:kPreferencesIdentifier];
-    [preferences registerBool:&pfEnabled default:kPreferenceKeyEnabledDefaultValue forKey:kPreferenceKeyEnabled];
-    [preferences registerUnsignedInteger:&pfMaximumHistoryAmount default:kPreferenceKeyMaximumHistoryAmountDefaultValue forKey:kPreferenceKeyMaximumHistoryAmount];
-    [preferences registerBool:&pfSaveText default:kPreferenceKeySaveTextDefaultValue forKey:kPreferenceKeySaveText];
-    [preferences registerBool:&pfSaveImages default:kPreferenceKeySaveImagesDefaultValue forKey:kPreferenceKeySaveImages];
-    [preferences registerBool:&pfAutomaticallyPaste default:kPreferenceKeyAutomaticallyPaste forKey:kPreferenceKeyAutomaticallyPaste];
-    [preferences registerBool:&pfAddSongDotLinkOption default:kPreferenceKeyAddSongDotLinkOptionDefaultValue forKey:kPreferenceKeyAddSongDotLinkOption];
-    [preferences registerBool:&pfAddTranslateOption default:kPreferenceKeyAddTranslateOptionDefaultValue forKey:kPreferenceKeyAddTranslateOption];
+    preferences = [[NSUserDefaults alloc] initWithSuiteName:kPreferencesIdentifier];
+
+    [preferences registerDefaults:@{
+        kPreferenceKeyEnabled: @(kPreferenceKeyEnabledDefaultValue),
+        kPreferenceKeyMaximumHistoryAmount: @(kPreferenceKeyMaximumHistoryAmountDefaultValue),
+        kPreferenceKeySaveText: @(kPreferenceKeySaveTextDefaultValue),
+        kPreferenceKeySaveImages: @(kPreferenceKeySaveImagesDefaultValue),
+        kPreferenceKeyAutomaticallyPaste: @(kPreferenceKeyAutomaticallyPasteDefaultValue),
+        kPreferenceKeyAddSongDotLinkOption: @(kPreferenceKeyAddSongDotLinkOptionDefaultValue),
+        kPreferenceKeyAddTranslateOption: @(kPreferenceKeyAddTranslateOptionDefaultValue)
+    }];
+
+    pfEnabled = [[preferences objectForKey:kPreferenceKeyEnabled] boolValue];
+    pfMaximumHistoryAmount = [[preferences objectForKey:kPreferenceKeyMaximumHistoryAmount] unsignedIntegerValue];
+    pfSaveText = [[preferences objectForKey:kPreferenceKeySaveText] boolValue];
+    pfSaveImages = [[preferences objectForKey:kPreferenceKeySaveImages] boolValue];
+    pfAutomaticallyPaste = [[preferences objectForKey:kPreferenceKeyAutomaticallyPaste] boolValue];
+    pfAddSongDotLinkOption = [[preferences objectForKey:kPreferenceKeyAddSongDotLinkOption] boolValue];
+    pfAddTranslateOption = [[preferences objectForKey:kPreferenceKeyAddTranslateOption] boolValue];
 
     [[PasteboardManager sharedInstance] setMaximumHistoryAmount:pfMaximumHistoryAmount];
     [[PasteboardManager sharedInstance] setSaveText:pfSaveText];
