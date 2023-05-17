@@ -9,6 +9,7 @@
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
 #import "../../Manager/PasteboardManager.h"
+#import <rootless.h>
 
 @interface NSConcreteNotification : NSNotification
 @end

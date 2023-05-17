@@ -48,15 +48,10 @@
 }
 
 - (void)respring {
-	NSArray* launchPaths = @[@"/usr/bin/killall", @"/var/jb/usr/bin/killall"];
-	for (NSString* launchPath in launchPaths) {
-		if ([[NSFileManager defaultManager] fileExistsAtPath:launchPath]) {
-			NSTask* task = [[NSTask alloc] init];
-			[task setLaunchPath:launchPath];
-			[task setArguments:@[@"backboardd"]];
-			[task launch];
-		}
-	}
+	NSTask* task = [[NSTask alloc] init];
+	[task setLaunchPath:ROOT_PATH_NS(@"/usr/bin/killall")];
+	[task setArguments:@[@"backboardd"]];
+	[task launch];
 }
 
 - (void)resetPrompt {
