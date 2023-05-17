@@ -30,9 +30,9 @@ static void override_UIKeyboardAutocorrectionController_setAutocorrectionList(UI
 static TIAutocorrectionList* createAutocorrectionList() {
     NSArray* labels = @[@"History", @"Copy", @"Paste"];
     NSMutableArray* candidates = [[NSMutableArray alloc] init];
-    for (NSUInteger i = 0; i < 3; i++) {
+    for (NSString* label in labels) {
         TIZephyrCandidate* candidate = [[objc_getClass("TIZephyrCandidate") alloc] init];
-        [candidate setLabel:labels[i]];
+        [candidate setLabel:label];
         [candidate setFromBundleId:@"dev.traurige.kayoko"];
         [candidates addObject:candidate];
     }
