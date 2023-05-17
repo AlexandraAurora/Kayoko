@@ -7,6 +7,7 @@
 
 #import "substrate.h"
 #import <UIKit/UIKit.h>
+#import "../../Manager/PasteboardManager.h"
 #import "../../Preferences/NotificationKeys.h"
 #import "../../Preferences/PreferenceKeys.h"
 #import <libSandy.h>

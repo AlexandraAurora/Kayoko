@@ -42,8 +42,7 @@
             [self setContentImageView:[[UIImageView alloc] init]];
 
             if (![item hasColor]) {
-                NSData* imageData = [[NSFileManager defaultManager] contentsAtPath:[NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]]];
-                UIImage* originalImage = [UIImage imageWithData:imageData];
+                UIImage* originalImage = [[PasteboardManager sharedInstance] imageForItem:item];
                 // there's no need to display the image in full resolution in the table view
                 UIImage* scaledImage = [ImageUtil imageWithImage:originalImage scaledToSize:CGSizeMake(originalImage.size.width / 4, originalImage.size.height / 4)];
                 [[self contentImageView] setImage:scaledImage];

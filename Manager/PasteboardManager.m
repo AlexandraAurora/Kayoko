@@ -198,6 +198,16 @@
     return json[historyKey] ?: [[NSArray alloc] init];
 }
 
+- (PasteboardItem *)latestHistoryItem {
+    NSArray* history = [self itemsFromHistoryWithKey:kHistoryKeyHistory];
+    return [PasteboardItem itemFromDictionary:[history firstObject] ?: nil];
+}
+
+- (UIImage *)imageForItem:(PasteboardItem *)item {
+    NSData* imageData = [_fileManager contentsAtPath:[NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]]];
+    return [UIImage imageWithData:imageData];
+}
+
 - (NSMutableDictionary *)getJson {
     [self ensureResourcesExist];
 

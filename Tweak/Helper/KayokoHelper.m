@@ -129,9 +129,22 @@ static void override_UISystemKeyboardDockController_dictationItemButtonWasPresse
 
 static void paste() {
     UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-    if ([pasteboard hasStrings] || [pasteboard hasImages]) {
-        [[UIApplication sharedApplication] sendAction:@selector(paste:) to:nil from:nil forEvent:nil];
+
+    // the clipboard clears itself after around 10 minutes
+    if (![pasteboard string] && ![pasteboard image]) {
+        PasteboardItem* item = [[PasteboardManager sharedInstance] latestHistoryItem];
+        if (!item) {
+            return;
+        }
+
+        if ([item hasImage]) {
+            [pasteboard setImage:[[PasteboardManager sharedInstance] imageForItem:item]];
+        } else {
+            [pasteboard setString:[item content]];
+        }
     }
+
+    [[UIApplication sharedApplication] sendAction:@selector(paste:) to:nil from:nil forEvent:nil];
 }
 
 #pragma mark - Preferences

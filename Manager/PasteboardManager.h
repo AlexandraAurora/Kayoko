@@ -34,6 +34,8 @@ static NSString* const kHistoryKeyFavorites = @"favorites";
 - (void)updatePasteboardWithItem:(PasteboardItem *)item fromHistoryWithKey:(NSString *)historyKey shouldAutoPaste:(BOOL)shouldAutoPaste;
 - (void)removePasteboardItem:(PasteboardItem *)item fromHistoryWithKey:(NSString *)historyKey shouldRemoveImage:(BOOL)shouldRemoveImage;
 - (NSMutableArray *)itemsFromHistoryWithKey:(NSString *)historyKey;
+- (PasteboardItem *)latestHistoryItem;
+- (UIImage *)imageForItem:(PasteboardItem *)item;
 @end
 
 @interface SBApplication : NSObject
