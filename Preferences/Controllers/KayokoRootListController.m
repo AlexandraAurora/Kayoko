@@ -78,22 +78,4 @@
 	[self reloadSpecifiers];
 	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyPreferencesReload, nil, nil, YES);
 }
-
-- (void)clearHistoryPrompt {
-	UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Kayoko" message:@"This will clear your clipboard history and favorites. Do you want to continue?" preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction* yesAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-		NSFileManager* fileManager = [NSFileManager defaultManager];
-		for (NSString* path in @[kHistoryPath, kHistoryImagesPath]) {
-			[fileManager removeItemAtPath:path error:nil];
-		}
-	}];
-
-	UIAlertAction* noAction = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:nil];
-
-	[resetAlert addAction:yesAction];
-	[resetAlert addAction:noAction];
-
-	[self presentViewController:resetAlert animated:YES completion:nil];
-}
 @end

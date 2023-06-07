@@ -59,7 +59,7 @@
         [[self grabber] setTranslatesAutoresizingMaskIntoConstraints:NO];
         [NSLayoutConstraint activateConstraints:@[
             [[[self grabber] topAnchor] constraintEqualToAnchor:[[self headerView] topAnchor] constant:12],
-            [[[self grabber] centerXAnchor] constraintEqualToAnchor:[[self headerView] centerXAnchor]],
+            [[[self grabber] centerXAnchor] constraintEqualToAnchor:[[self headerView] centerXAnchor]]
         ]];
 
 
@@ -73,34 +73,35 @@
         [[self titleLabel] setTranslatesAutoresizingMaskIntoConstraints:NO];
         [NSLayoutConstraint activateConstraints:@[
             [[[self titleLabel] topAnchor] constraintEqualToAnchor:[[self grabber] bottomAnchor] constant:12],
-            [[[self titleLabel] leadingAnchor] constraintEqualToAnchor:[[self headerView] leadingAnchor] constant:24],
+            [[[self titleLabel] leadingAnchor] constraintEqualToAnchor:[[self headerView] leadingAnchor] constant:24]
         ]];
 
 
-        // subtitle label
-        [self setSubtitleLabel:[[UILabel alloc] init]];
-        [[self subtitleLabel] setFont:[UIFont systemFontOfSize:17 weight:UIFontWeightMedium]];
-        [[self subtitleLabel] setTextColor:[[UIColor labelColor] colorWithAlphaComponent:0.8]];
-        [[self headerView] addSubview:[self subtitleLabel]];
+        // clear button
+        [self setClearButton:[[UIButton alloc] init]];
+        [[self clearButton] addTarget:self action:@selector(handleClearButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [[[self clearButton] titleLabel] setFont:[UIFont systemFontOfSize:17 weight:UIFontWeightMedium]];
+        [[self clearButton] setTitleColor:[[UIColor labelColor] colorWithAlphaComponent:0.8] forState:UIControlStateNormal];
+        [[self headerView] addSubview:[self clearButton]];
 
-        [[self subtitleLabel] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[self clearButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
         [NSLayoutConstraint activateConstraints:@[
-            [[[self subtitleLabel] topAnchor] constraintEqualToAnchor:[[self titleLabel] bottomAnchor] constant:2],
-            [[[self subtitleLabel] leadingAnchor] constraintEqualToAnchor:[[self titleLabel] leadingAnchor]],
+            [[[self clearButton] topAnchor] constraintEqualToAnchor:[[self titleLabel] bottomAnchor] constant:-4],
+            [[[self clearButton] leadingAnchor] constraintEqualToAnchor:[[self titleLabel] leadingAnchor]]
         ]];
 
 
-        // header button
-        [self setHeaderButton:[[UIButton alloc] init]];
-        [[self headerButton] addTarget:self action:@selector(handleHeaderButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        [self updateHeaderButtonImageWithName:@"heart" andColor:[UIColor labelColor]];
-        [[self headerButton] setTintColor:[UIColor labelColor]];
-        [[self headerView] addSubview:[self headerButton]];
+        // favorites button
+        [self setFavoritesButton:[[UIButton alloc] init]];
+        [[self favoritesButton] addTarget:self action:@selector(handleFavoritesButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [self updateButton:[self favoritesButton] withImageName:@"heart" andColor:[UIColor labelColor]];
+        [[self favoritesButton] setTintColor:[UIColor labelColor]];
+        [[self headerView] addSubview:[self favoritesButton]];
 
-        [[self headerButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[self favoritesButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
         [NSLayoutConstraint activateConstraints:@[
-            [[[self headerButton] centerYAnchor] constraintEqualToAnchor:[[self titleLabel] centerYAnchor]],
-            [[[self headerButton] trailingAnchor] constraintEqualToAnchor:[[self headerView] trailingAnchor] constant:-24],
+            [[[self favoritesButton] centerYAnchor] constraintEqualToAnchor:[[self titleLabel] centerYAnchor]],
+            [[[self favoritesButton] trailingAnchor] constraintEqualToAnchor:[[self headerView] trailingAnchor] constant:-24]
         ]];
 
 
@@ -186,7 +187,7 @@
     }
 }
 
-- (void)handleHeaderButtonPressed {
+- (void)handleFavoritesButtonPressed {
     if (_isAnimating) {
         return;
     }
@@ -201,19 +202,27 @@
 
         [self showContentView:[self historyTableView] andHideContentView:[self favoritesTableView] reverse:YES];
 
-        [self updateSubtitleWithHistoryLabel:[[self historyTableView] name] andItemCount:[items count]];
-        [self updateHeaderButtonImageWithName:@"heart" andColor:[UIColor labelColor]];
+        [self updateClearButtonTitle:[[self historyTableView] name] andItemCount:[items count]];
+        [self updateButton:[self favoritesButton] withImageName:@"heart" andColor:[UIColor labelColor]];
     } else {
         NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
         [[self favoritesTableView] reloadDataWithItems:items];
 
         [self showContentView:[self favoritesTableView] andHideContentView:[self historyTableView] reverse:NO];
 
-        [self updateSubtitleWithHistoryLabel:[[self favoritesTableView] name] andItemCount:[items count]];
-        [self updateHeaderButtonImageWithName:@"heart.fill" andColor:[UIColor systemPinkColor]];
+        [self updateClearButtonTitle:[[self favoritesTableView] name] andItemCount:[items count]];
+        [self updateButton:[self favoritesButton] withImageName:@"heart.fill" andColor:[UIColor systemPinkColor]];
     }
 
     [self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleSoft];
+}
+
+- (void)handleClearButtonPressed {
+    if (![[self historyTableView] isHidden]) {
+        [[self historyTableView] clearHistoryWithKey:kHistoryKeyHistory];
+    } else if (![[self favoritesTableView] isHidden]) {
+        [[self favoritesTableView] clearHistoryWithKey:kHistoryKeyFavorites];
+    }
 }
 
 - (void)showPreviewWithItem:(PasteboardItem *)item {
@@ -232,7 +241,7 @@
     _previewSourceTableView = [[self historyTableView] isHidden] ? [self favoritesTableView] : [self historyTableView];
     [self showContentView:[self previewView] andHideContentView:_previewSourceTableView reverse:NO];
 
-    [[self subtitleLabel] setText:@"Preview"];
+    [[self clearButton] setTitle:@"Preview" forState:UIControlStateNormal];
     [self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleMedium];
 }
 
@@ -244,7 +253,7 @@
     [self showContentView:_previewSourceTableView andHideContentView:[self previewView] reverse:YES];
     [[self previewView] reset];
 
-    [self updateSubtitleWithHistoryLabel:[_previewSourceTableView name] andItemCount:[[_previewSourceTableView items] count]];
+    [self updateClearButtonTitle:[_previewSourceTableView name] andItemCount:[[_previewSourceTableView items] count]];
 }
 
 - (void)showContentView:(UIView *)viewToShow andHideContentView:(UIView *)viewToHide reverse:(BOOL)reverse {
@@ -267,18 +276,18 @@
     }];
 }
 
-- (void)updateSubtitleWithHistoryLabel:(NSString *)label andItemCount:(NSUInteger)count {
+- (void)updateClearButtonTitle:(NSString *)title andItemCount:(NSUInteger)count {
     if (count == 1) {
-        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – 1 Item", label]];
+        [[self clearButton] setTitle:[NSString stringWithFormat:@"%@ – 1 Item", title] forState:UIControlStateNormal];
     } else {
-        [[self subtitleLabel] setText:[NSString stringWithFormat:@"%@ – %lu Items", label, count]];
+        [[self clearButton] setTitle:[NSString stringWithFormat:@"%@ – %lu Items", title, count] forState:UIControlStateNormal];
     }
 }
 
-- (void)updateHeaderButtonImageWithName:(NSString *)imageName andColor:(UIColor *)color {
+- (void)updateButton:(UIButton *)button withImageName:(NSString *)imageName andColor:(UIColor *)color {
     UIImageSymbolConfiguration* configuration = [UIImageSymbolConfiguration configurationWithPointSize:21 weight:UIImageSymbolWeightMedium];
-    [[self headerButton] setImage:[[UIImage systemImageNamed:imageName] imageWithConfiguration:configuration] forState:UIControlStateNormal];
-    [[self headerButton] setTintColor:color];
+    [button setImage:[[UIImage systemImageNamed:imageName] imageWithConfiguration:configuration] forState:UIControlStateNormal];
+    [button setTintColor:color];
 }
 
 - (void)triggerHapticFeedbackWithStyle:(UIImpactFeedbackStyle)style {
@@ -292,11 +301,11 @@
     if (![[self historyTableView] isHidden]) {
         NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyHistory];
         [[self historyTableView] reloadDataWithItems:items];
-        [self updateSubtitleWithHistoryLabel:@"History" andItemCount:[items count]];
+        [self updateClearButtonTitle:@"History" andItemCount:[items count]];
     } else {
         NSArray* items = [[PasteboardManager sharedInstance] itemsFromHistoryWithKey:kHistoryKeyFavorites];
         [[self favoritesTableView] reloadDataWithItems:items];
-        [self updateSubtitleWithHistoryLabel:@"Favorites" andItemCount:[items count]];
+        [self updateClearButtonTitle:@"Favorites" andItemCount:[items count]];
     }
 }
 

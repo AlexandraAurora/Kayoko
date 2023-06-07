@@ -16,4 +16,5 @@
 @property(atomic, assign)BOOL addSongDotLinkOption;
 - (instancetype)initWithName:(NSString *)name;
 - (void)reloadDataWithItems:(NSArray *)items;
+- (void)clearHistoryWithKey:(NSString *)key;
 @end
