@@ -131,7 +131,7 @@
 - (void)addTranslateItemFromItem:(PasteboardItem *)item {
     NSString* encodedString = [[item content] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     NSString* targetLanguageCode = [[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode];
-    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.traurige.dev/v1/deepl/translate?text=%@&target_lang=%@", encodedString, targetLanguageCode]];
+    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.traurige.dev/v1/translate?text=%@&target_lang=%@", encodedString, targetLanguageCode]];
     NSURLSessionDataTask* task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response, NSError* _Nullable error) {
         @try {
             NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
