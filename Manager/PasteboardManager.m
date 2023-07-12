@@ -135,7 +135,7 @@
     NSURLSessionDataTask* task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response, NSError* _Nullable error) {
         @try {
             NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-            NSString* translation = json[@"text"];
+            NSString* translation = json[@"message"];
             if (translation) {
                 PasteboardItem* translationItem = [[PasteboardItem alloc] initWithBundleIdentifier:[item bundleIdentifier] andContent:translation withImageNamed:nil];
                 [self addPasteboardItem:translationItem toHistoryWithKey:kHistoryKeyHistory];
