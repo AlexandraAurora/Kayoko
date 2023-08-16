@@ -57,11 +57,11 @@
                 // save as png if an alpha channel is present though
                 if ([ImageUtil imageHasAlpha:image]) {
                     imageName = [imageName stringByAppendingString:@".png"];
-                    NSString* filePath = [kHistoryImagesPath stringByAppendingString:imageName];
+                    NSString* filePath = ROOT_PATH_NS_VAR([kHistoryImagesPath stringByAppendingString:imageName]);
                     [UIImagePNGRepresentation([ImageUtil rotatedImageFromImage:image]) writeToFile:filePath atomically:YES];
                 } else {
                     imageName = [imageName stringByAppendingString:@".jpg"];
-                    NSString* filePath = [kHistoryImagesPath stringByAppendingString:imageName];
+                    NSString* filePath = ROOT_PATH_NS_VAR([kHistoryImagesPath stringByAppendingString:imageName]);
                     [UIImageJPEGRepresentation(image, 1) writeToFile:filePath atomically:YES];
                 }
 
@@ -160,7 +160,7 @@
             if ([[historyItem content] isEqualToString:[item content]]) {
                 [history removeObject:dictionary];
                 if ([item hasImage] && shouldRemoveImage) {
-                    NSString* filePath = [kHistoryImagesPath stringByAppendingString:[item imageName]];
+                    NSString* filePath = ROOT_PATH_NS_VAR([kHistoryImagesPath stringByAppendingString:[item imageName]]);
                     [_fileManager removeItemAtPath:filePath error:nil];
                 }
                 break;
@@ -177,7 +177,7 @@
     [_pasteboard setString:@""];
 
     if ([item hasImage] && ![item hasPlainText] && ![item hasLink] && ![item hasMusicLink] && ![item hasColor]) {
-        NSString* filePath = [kHistoryImagesPath stringByAppendingString:[item imageName]];
+        NSString* filePath = ROOT_PATH_NS_VAR([kHistoryImagesPath stringByAppendingString:[item imageName]]);
         UIImage* image = [UIImage imageWithContentsOfFile:filePath];
         [_pasteboard setImage:image];
     } else {
@@ -204,14 +204,15 @@
 }
 
 - (UIImage *)imageForItem:(PasteboardItem *)item {
-    NSData* imageData = [_fileManager contentsAtPath:[NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]]];
+    NSString* path = [NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]];
+    NSData* imageData = [_fileManager contentsAtPath:ROOT_PATH_NS_VAR(path)];
     return [UIImage imageWithData:imageData];
 }
 
 - (NSMutableDictionary *)getJson {
     [self ensureResourcesExist];
 
-    NSData* jsonData = [NSData dataWithContentsOfFile:kHistoryPath];
+    NSData* jsonData = [NSData dataWithContentsOfFile:ROOT_PATH_NS_VAR(kHistoryPath)];
     NSMutableDictionary* json = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
 
     return json;
@@ -219,20 +220,20 @@
 
 - (void)setJsonFromDictionary:(NSMutableDictionary *)dictionary {
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
-    [jsonData writeToFile:kHistoryPath atomically:YES];
+    [jsonData writeToFile:ROOT_PATH_NS_VAR(kHistoryPath) atomically:YES];
 
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)kNotificationKeyCoreReload, nil, nil, YES);
 }
 
 - (void)ensureResourcesExist {
     BOOL isDirectory;
-    if (![_fileManager fileExistsAtPath:kHistoryImagesPath isDirectory:&isDirectory]) {
-        [_fileManager createDirectoryAtPath:kHistoryImagesPath withIntermediateDirectories:YES attributes:nil error:nil];
+    if (![_fileManager fileExistsAtPath:ROOT_PATH_NS_VAR(kHistoryImagesPath) isDirectory:&isDirectory]) {
+        [_fileManager createDirectoryAtPath:ROOT_PATH_NS_VAR(kHistoryImagesPath) withIntermediateDirectories:YES attributes:nil error:nil];
     }
 
-    if (![_fileManager fileExistsAtPath:kHistoryPath]) {
+    if (![_fileManager fileExistsAtPath:ROOT_PATH_NS_VAR(kHistoryPath)]) {
         NSData* jsonData = [NSJSONSerialization dataWithJSONObject:[[NSMutableDictionary alloc] init] options:NSJSONWritingPrettyPrinted error:nil];
-        [jsonData writeToFile:kHistoryPath options:NSDataWritingAtomic error:nil];
+        [jsonData writeToFile:ROOT_PATH_NS_VAR(kHistoryPath) options:NSDataWritingAtomic error:nil];
     }
 }
 @end

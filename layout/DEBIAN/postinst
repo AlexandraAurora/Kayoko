@@ -2,6 +2,8 @@
 
 if [ -d /var/mobile/Documents/dev.traurige/ ]; then
     chown -R mobile:mobile /var/mobile/Documents/dev.traurige/
+elif [ -d /var/jb/var/mobile/Documents/dev.traurige/ ]; then
+    chown -R mobile:mobile /var/jb/var/mobile/Documents/dev.traurige/
 fi
 
 if [[ -e /Library/LaunchDaemons/dev.traurige.kayokod.plist ]]; then

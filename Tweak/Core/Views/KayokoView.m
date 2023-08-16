@@ -230,7 +230,8 @@
         [[[self previewView] webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[item content]]]];
         [[[self previewView] webView] setHidden:NO];
     } else if ([item hasImage]) {
-        NSData* imageData = [[NSFileManager defaultManager] contentsAtPath:[NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]]];
+        NSString* path = [NSString stringWithFormat:@"%@%@", kHistoryImagesPath, [item imageName]];
+        NSData* imageData = [[NSFileManager defaultManager] contentsAtPath:ROOT_PATH_NS_VAR(path)];
         [[[self previewView] imageView] setImage:[UIImage imageWithData:imageData]];
         [[[self previewView] imageView] setHidden:NO];
     } else {
