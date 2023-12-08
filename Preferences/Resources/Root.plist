@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>SingleContactCell</string>
+			<key>displayName</key>
+			<string>Alexandra</string>
+			<key>username</key>
+			<string>AlexandraAurora</string>
+			<key>height</key>
+			<integer>58</integer>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>key</key>
+			<string>Enabled</string>
+			<key>label</key>
+			<string>Enable Kayoko</string>
+            <key>PostNotification</key>
+			<string>codes.aurora.kayoko.preferences.reload</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>History</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>label</key>
+			<string>Maximum Amount</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<real>200</real>
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>key</key>
+			<string>MaximumHistoryAmount</string>
+			<key>min</key>
+			<real>50</real>
+			<key>max</key>
+			<real>500</real>
+			<key>showValue</key>
+			<true />
+			<key>isSegmented</key>
+			<true />
+			<key>segmentCount</key>
+			<real>9</real>
+			<key>PostNotification</key>
+			<string>codes.aurora.kayoko.preferences.reload</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>key</key>
+			<string>SaveText</string>
+			<key>label</key>
+			<string>Save Text</string>
+			<key>PostNotification</key>
+			<string>codes.aurora.kayoko.preferences.reload</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>key</key>
+			<string>SaveImages</string>
+			<key>label</key>
+			<string>Save Images</string>
+			<key>PostNotification</key>
+			<string>codes.aurora.kayoko.preferences.reload</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Behavior</string>
+			<key>footerText</key>
+			<string>The "Prediction Bar" method displays custom suggestions on the "More Keyboard Keyplane" (123).</string>
+			<key>isStaticText</key>
+			<true />
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>default</key>
+			<integer>0</integer>
+			<key>detail</key>
+			<string>PSListItemsController</string>
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>label</key>
+			<string>Activation Method:</string>
+			<key>key</key>
+			<string>ActivationMethod</string>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+			</array>
+			<key>validTitles</key>
+			<array>
+				<string>Prediction Bar</string>
+				<string>Dictation Key</string>
+			</array>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true />
+			<key>defaults</key>
+			<string>codes.aurora.kayoko.preferences</string>
+			<key>key</key>
+			<string>AutomaticallyPaste</string>
+			<key>label</key>
+			<string>Automatically Paste</string>
+			<key>PostNotification</key>
+			<string>codes.aurora.kayoko.preferences.reload</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Try out your changes by typing, copying and pasting text.</string>
+			<key>isStaticText</key>
+			<true />
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>placeholder</key>
+			<string>Wishing on a star...</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Tools</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Respring</string>
+			<key>action</key>
+			<string>respring</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset Preferences</string>
+			<key>action</key>
+			<string>resetPrompt</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Thanks to you and everyone who has helped in any way.</string>
+			<key>isStaticText</key>
+			<true />
+		</dict>
+		<dict>
+ 			<key>cell</key>
+ 			<string>PSLinkCell</string>
+ 			<key>label</key>
+ 			<string>Credits</string>
+ 			<key>detail</key>
+ 			<string>KayokoCreditsListController</string>
+ 		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>LinkCell</string>
+			<key>label</key>
+			<string>My Tweaks</string>
+			<key>subtitle</key>
+			<string>Check out my other work.</string>
+			<key>url</key>
+			<string>https://akarii.cafe/user/AlexandraAurora</string>
+			<key>height</key>
+			<integer>54</integer>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>LinkCell</string>
+			<key>label</key>
+			<string>Source Code</string>
+			<key>subtitle</key>
+			<string>Find it on my GitHub.</string>
+			<key>url</key>
+			<string>https://github.com/AlexandraAurora/Kayoko</string>
+			<key>height</key>
+			<integer>54</integer>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>LinkCell</string>
+			<key>label</key>
+			<string>Donate</string>
+			<key>subtitle</key>
+			<string>Let me know that you like what I do.</string>
+			<key>url</key>
+			<string>https://ko-fi.com/AlexandraAurora</string>
+			<key>height</key>
+			<integer>54</integer>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Kayoko</string>
+</dict>
+</plist>

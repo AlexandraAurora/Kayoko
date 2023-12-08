@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ -e /Library/LaunchDaemons/codes.aurora.kayokod.plist ]]; then
+    launchctl load -w /Library/LaunchDaemons/codes.aurora.kayokod.plist;
+elif [[ -e /var/jb/Library/LaunchDaemons/codes.aurora.kayokod.plist ]]; then
+    launchctl load -w /var/jb/Library/LaunchDaemons/codes.aurora.kayokod.plist;
+fi
